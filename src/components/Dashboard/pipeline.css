@@ -1,0 +1,285 @@
+/* Estilos para arrastar o pipeline */
+.pipeline-scroll-container {
+  margin: 0 -10px;
+  padding: 0 10px;
+  position: relative;
+  overflow-x: auto !important;
+  touch-action: pan-x !important;
+  cursor: grab !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  scroll-behavior: smooth;
+  /* Oculta a barra de rolagem para Firefox */
+  scrollbar-width: none;
+  /* Oculta a barra de rolagem para IE e Edge */
+  -ms-overflow-style: none;
+}
+
+/* Oculta a barra de rolagem para navegadores WebKit (Chrome, Safari) */
+.pipeline-scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Estilo para o cursor quando estiver arrastando */
+.pipeline-scroll-container.dragging {
+  cursor: grabbing !important;
+}
+
+/* Estilo para o cursor quando não estiver arrastando */
+.pipeline-scroll-container:not(.dragging) {
+  cursor: grab !important;
+}
+
+/* Estilo para os estágios do pipeline */
+.pipeline-stage {
+  transition: transform 0.15s ease;
+  flex: 0 0 260px !important;
+  min-width: 260px !important;
+}
+
+/* Efeito hover para estágios do pipeline */
+.pipeline-stage:hover {
+  transform: translateY(-3px);
+}
+
+/* Estilos para drag & drop */
+.pipeline-card {
+  cursor: grab;
+  transition: all 0.3s ease;
+  animation: card-enter 0.3s forwards;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pipeline-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.pipeline-card.dragging-card {
+  opacity: 0.6;
+  transform: scale(0.98);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Estilo para cards atrasados */
+.pipeline-card.overdue-card {
+  background-color: rgba(255, 192, 203, 0.15) !important;
+  border-left: 3px solid #ff6b81 !important;
+}
+
+.pipeline-card.overdue-card:hover {
+  box-shadow: 0 3px 10px rgba(255, 107, 129, 0.3) !important;
+}
+
+/* Estilo para cards de oportunidades vendidas */
+.pipeline-card.sold-card {
+  background-color: rgba(152, 251, 152, 0.15) !important;
+  border-left: 3px solid #28a745 !important;
+}
+
+.pipeline-card.sold-card:hover {
+  box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3) !important;
+}
+
+/* Estilo para cards normais (não vencidos, não vendidos) */
+.pipeline-card.normal-card {
+  background-color: rgba(255, 255, 255, 1) !important;
+  border-left: 3px solid #17a2b8 !important;
+}
+
+.pipeline-card.normal-card:hover {
+  box-shadow: 0 3px 10px rgba(23, 162, 184, 0.3) !important;
+}
+
+/* Estilo especial para a etapa de Fechamento */
+.pipeline-stage:last-child .pipeline-stage-header {
+  background-color: rgba(40, 167, 69, 0.1);
+  border-bottom: 2px solid rgba(40, 167, 69, 0.3);
+}
+
+.pipeline-stage:last-child {
+  box-shadow: 0 0 10px rgba(40, 167, 69, 0.2);
+}
+
+.pipeline-stage:last-child .border {
+  border-color: rgba(40, 167, 69, 0.3) !important;
+}
+
+/* Estilo especial para cards na etapa de Fechamento que não foram vendidos ainda */
+.pipeline-stage:last-child .pipeline-card:not(.sold-card) {
+  background-color: rgba(255, 193, 7, 0.1) !important;
+  border-left: 3px solid #ffc107 !important;
+}
+
+.pipeline-stage:last-child .pipeline-card:not(.sold-card):hover {
+  box-shadow: 0 3px 10px rgba(255, 193, 7, 0.3) !important;
+}
+
+/* Dropzone e áreas relacionadas */
+.pipeline-dropzone {
+  transition: background-color 0.2s ease;
+  min-height: 100px;
+  position: relative;
+}
+
+.pipeline-dropzone.drag-over {
+  background-color: rgba(0, 123, 255, 0.1);
+  border: 1px dashed #007bff;
+  border-radius: 4px;
+}
+
+/* Overlay para capturar eventos de drop mesmo com muitos cards */
+.pipeline-dropzone-overlay {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  background-color: transparent;
+}
+
+/* Mostrar overlay durante o drag */
+.pipeline-dropzone.drag-over .pipeline-dropzone-overlay {
+  display: block;
+}
+
+/* Espaço extra no final da lista para facilitar o drop */
+.pipeline-dropzone-end-spacer {
+  min-height: 100px;
+  width: 100%;
+}
+
+.pipeline-stage.drag-over .pipeline-stage-header {
+  background-color: rgba(0, 123, 255, 0.08);
+}
+
+.pipeline-empty-placeholder {
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.pipeline-dropzone.drag-over .pipeline-empty-placeholder {
+  opacity: 0.3;
+}
+
+.pipeline-dropzone-hint {
+  display: none;
+  text-align: center;
+  padding: 15px;
+  color: #007bff;
+  font-weight: 500;
+  border: 1px dashed rgba(0, 123, 255, 0.5);
+  border-radius: 4px;
+  margin: 8px 0;
+  animation: pulse 1.5s infinite;
+  position: relative;
+  z-index: 11; /* Acima do overlay */
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.2);
+  }
+  70% {
+    box-shadow: 0 0 0 5px rgba(0, 123, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+  }
+}
+
+.pipeline-dropzone.drag-over .pipeline-dropzone-hint {
+  display: block;
+}
+
+/* Estilos para a visualização em lista */
+.list-view-container {
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.list-header {
+  font-size: 14px;
+  color: #495057;
+}
+
+.list-body {
+  scrollbar-width: thin;
+}
+
+.list-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.list-body::-webkit-scrollbar-track {
+  background: #f8f9fa;
+}
+
+.list-body::-webkit-scrollbar-thumb {
+  background-color: #dee2e6;
+  border-radius: 6px;
+}
+
+.list-item {
+  font-size: 14px;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.list-item:hover {
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+.list-item.selected {
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+/* Estilos para os diferentes tipos de visualização em lista */
+.list-view-simple .list-item {
+  padding: 8px 12px;
+}
+
+.list-view-detailed .list-item {
+  padding: 12px;
+}
+
+.list-view-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px;
+}
+
+/* Estilos para o avatar-circle */
+.avatar-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.avatar-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
