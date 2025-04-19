@@ -151,8 +151,8 @@ const SidebarContent = (props) => {
           <ul className="metismenu list-unstyled" id="side-menu">
             <li>
               <Link to="/dashboard">
-                <i className="bx bx-home-circle"></i>
-                <span>{props.t("Dashboard")}</span>
+                <i className="bx bx-git-branch"></i>
+                <span>{props.t("Pipeline")}</span>
               </Link>
             </li>  
             <li>
@@ -165,6 +165,12 @@ const SidebarContent = (props) => {
               <Link to="/calendario">
                 <i className="bx bx-calendar"></i>
                 <span>{props.t("Calendário")}</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/atividades">
+                <i className="bx bx-calendar-event"></i>
+                <span>{props.t("Atividades")}</span>
               </Link>
             </li>
             <li>
