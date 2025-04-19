@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 
 import NotificationDropdown from "../CommonForBoth/TopbarDropdown/NotificationDropdown";
 import ProfileMenu from "../CommonForBoth/TopbarDropdown/ProfileMenu";
+import NewOpportunities from "../Header/NewOpportunities";
 
 import logo from "../../assets/images/logo.svg";
 import logoLightSvg from "../../assets/images/logo-light.svg";
@@ -19,6 +20,12 @@ import {
 } from "../../store/actions";
 
 const Header = (props) => {
+  const [isNewOpportunityModalOpen, setIsNewOpportunityModalOpen] = useState(false);
+
+  const toggleNewOpportunityModal = () => {
+    setIsNewOpportunityModalOpen(!isNewOpportunityModalOpen);
+  };
+
   return (
     <React.Fragment>
       <header id="page-topbar">
@@ -50,9 +57,12 @@ const Header = (props) => {
             </div>
 
             <div className="d-inline-block">
-              <Link to="/oportunidades/nova" className="btn btn-success">
+              <button 
+                className="btn btn-success" 
+                onClick={toggleNewOpportunityModal}
+              >
                 <i className="bx bx-plus me-1"></i> Oportunidade
-              </Link>
+              </button>
             </div>
           </div>
 
@@ -102,6 +112,12 @@ const Header = (props) => {
           </div>
         </div>
       </header>
+
+      {/* Modal de Nova Oportunidade */}
+      <NewOpportunities
+        isOpen={isNewOpportunityModalOpen}
+        toggle={toggleNewOpportunityModal}
+      />
     </React.Fragment>
   );
 };

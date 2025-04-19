@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Container, Row, Col, Card, CardBody, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
+import { Container, Row, Col } from "reactstrap";
 
 // Importando componentes
 import CustomerDetailHeader from "../../components/CustomerDetail/Header";
 import SideDetails from "../../components/CustomerDetail/SideDetails";
 import CompanyDetails from "../../components/CustomerDetail/CompanyDetails";
+import MainContent from "../../components/CustomerDetail/MainContent";
 import "../../components/CustomerDetail/styles.css";
 
 const CustomerDetail = () => {
   const { id } = useParams();
-  const [activeTab, setActiveTab] = useState("1");
   const [customer, setCustomer] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -84,11 +84,6 @@ const CustomerDetail = () => {
     }, 1000);
   }, [id]);
 
-  // Alternar entre abas
-  const toggle = (tab) => {
-    if (activeTab !== tab) setActiveTab(tab);
-  };
-
   // Título da página
   document.title = "Detalhes do Cliente | InteliTec CRM";
 
@@ -116,17 +111,9 @@ const CustomerDetail = () => {
                   <CompanyDetails companyData={customer.companyData} />
                 </Col>
                 
-                {/* Coluna principal - md-9 (será implementada posteriormente) */}
+                {/* Coluna principal - md-9 */}
                 <Col md={9}>
-                  <Card className="mb-4">
-                    <CardBody>
-                      <h5 className="mb-3">Conteúdo Principal</h5>
-                      <p className="text-muted">
-                        Aqui serão exibidas as abas com informações detalhadas sobre a oportunidade, 
-                        atividades, comunicações, propostas e outras informações relevantes.
-                      </p>
-                    </CardBody>
-                  </Card>
+                  <MainContent customer={customer} />
                 </Col>
               </Row>
             </>

@@ -1,8 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Card } from "reactstrap";
+import { useNavigate } from "react-router-dom";
 
 const PipeCard = ({ opportunity, onDragStart }) => {
+  const navigate = useNavigate();
+
   // Formatação de valores monetários
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('pt-BR', { 
@@ -92,6 +95,18 @@ const PipeCard = ({ opportunity, onDragStart }) => {
     e.stopPropagation();
   };
   
+  // Função para navegar para a página de detalhes do cliente
+  const handleCardClick = (e) => {
+    // Não navegar se o usuário está arrastando o card
+    if (e.target.classList.contains('dragging-card')) return;
+    
+    // Evitar navegação se o clique foi em um elemento interativo dentro do card
+    if (e.target.closest('button, a, [role="button"]')) return;
+    
+    // Navegar para a página de detalhes do cliente
+    navigate(`/cliente/${opportunity.id}`);
+  };
+  
   return (
     <Card 
       className={`mb-2 border shadow-none pipeline-card ${isOverdue() ? 'overdue-card' : ''} ${opportunity.sold ? 'sold-card' : ''} ${!isOverdue() && !opportunity.sold ? 'normal-card' : ''}`}
@@ -99,8 +114,9 @@ const PipeCard = ({ opportunity, onDragStart }) => {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragOver={handleDragOver}
+      onClick={handleCardClick}
       data-opportunity-id={opportunity.id}
-      style={cardStyle}
+      style={{...cardStyle, cursor: 'pointer'}}
     >
       <div className="p-2">
         {/* Cabeçalho com título e badge de probabilidade */}

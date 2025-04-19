@@ -24,7 +24,6 @@ const NewOpportunities = ({ isOpen, toggle }) => {
     funnel: "Funil Vendas",
     owner: "Felipe Macedo",
     company: "",
-    companyNickname: "",
     cnpj: "",
     contactPerson: "",
     phone: "",
@@ -99,38 +98,23 @@ const NewOpportunities = ({ isOpen, toggle }) => {
       // Atualiza o formulário com os dados obtidos
       setFormData(prev => ({
         ...prev,
-        company: companyData.nome,
-        companyNickname: companyData.nomeFantasia,
-        phone: companyData.telefone || prev.phone,
-        email: companyData.email || prev.email,
-        title: prev.title || `Proposta para ${companyData.nomeFantasia || companyData.nome}`
+        company: companyData.nomeFantasia || companyData.nome,
+        // Preenchendo o campo de telefone se estiver disponível
+        phone: companyData.telefone || prev.phone
       }));
       
       // Notificação mais sutil
-      toast.success(`Empresa encontrada: ${companyData.nome}`, {
+      toast.success("Dados da empresa carregados", {
         position: "top-right",
         autoClose: 2000,
-        hideProgressBar: false
+        hideProgressBar: true
       });
     } catch (error) {
       console.error("Erro ao buscar CNPJ:", error);
       
-      // Mensagem mais amigável para CNPJ não encontrado
-      if (error.message.includes('não encontrado')) {
-        toast.info("Empresa não encontrada na base de dados pública. Você pode inserir os dados manualmente.", {
-          position: "top-right",
-          autoClose: 5000,
-        });
-        
-        // Limpar os campos de empresa mas manter o CNPJ
-        setFormData(prev => ({
-          ...prev,
-          company: "",
-          companyNickname: ""
-        }));
-      } else {
-        // Para outros erros
-        toast.error("Ocorreu um erro ao consultar o CNPJ. Por favor, tente novamente ou insira os dados manualmente.", {
+      // Mensagem apenas para erros não relacionados a validação
+      if (error.message !== 'CNPJ inválido') {
+        toast.error(`Não foi possível carregar os dados da empresa. Tente novamente.`, {
           position: "top-right",
           autoClose: 3000,
         });
@@ -197,6 +181,69 @@ const NewOpportunities = ({ isOpen, toggle }) => {
         <div className="small text-muted">Funil » Funil Vendas</div>
       </ModalHeader>
       <ModalBody>
+        {/* Etapas do funil - Versão verde com apenas Cadastro selecionável */}
+        <Row className="mb-5">
+          <Col>
+            <div className="mb-2 d-flex justify-content-between align-items-center">
+              <span className="text-muted small">Etapas do funil de vendas</span>
+              <span className="badge bg-light text-success border">Etapa atual: {formData.stage}</span>
+            </div>
+            
+            <div className="d-flex position-relative" style={{ height: '45px' }}>
+              {/* Linha conectora */}
+              <div className="position-absolute" style={{ 
+                top: '22px', 
+                left: '0', 
+                right: '0', 
+                height: '2px', 
+                backgroundColor: '#e9ecef',
+                zIndex: '1'
+              }}></div>
+              
+              {/* Etapas */}
+              {funnelStages.map((stage, index) => (
+                <div 
+                  key={stage.id}
+                  className="position-relative text-center"
+                  style={{ 
+                    flex: '1',
+                    zIndex: '2',
+                  }}
+                >
+                  {/* Círculo/Indicador */}
+                  <div 
+                    onClick={() => stage.name === "Cadastro" ? setFormData({...formData, stage: stage.name}) : null}
+                    className={`
+                      rounded-circle mx-auto
+                      d-flex align-items-center justify-content-center
+                      ${stage.name === formData.stage ? 'bg-success text-white' : 'bg-white text-muted border'}
+                    `}
+                    style={{ 
+                      width: '36px', 
+                      height: '36px',
+                      cursor: stage.name === "Cadastro" ? 'pointer' : 'not-allowed',
+                      transition: 'all 0.2s ease',
+                      boxShadow: stage.name === formData.stage ? '0 2px 4px rgba(0,0,0,0.1)' : 'none',
+                      opacity: stage.name === "Cadastro" ? 1 : 0.5
+                    }}
+                    title={stage.name === "Cadastro" ? "Selecionar esta etapa" : "Esta etapa não está disponível para novas oportunidades"}
+                  >
+                    {index + 1}
+                  </div>
+                  
+                  {/* Nome da etapa */}
+                  <div className="mt-1">
+                    <small className={`${stage.name === formData.stage ? 'text-success fw-bold' : 'text-muted'}`}>
+                      {stage.name}
+                    </small>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+          </Col>
+        </Row>
+
         <Row>
           <Col md={6}>
             <FormGroup>
@@ -288,14 +335,14 @@ const NewOpportunities = ({ isOpen, toggle }) => {
           <Col md={6}>
             <FormGroup>
               <Label className="form-label">
-                Oportunidade » Empresa (Razão Social)
+                Oportunidade » Empresa
               </Label>
               <Input
                 type="text"
                 name="company"
                 value={formData.company}
                 onChange={handleInputChange}
-                placeholder="Razão Social da empresa"
+                placeholder="Nome da empresa"
                 className="form-control"
               />
               {loading.cnpj && (
@@ -309,30 +356,6 @@ const NewOpportunities = ({ isOpen, toggle }) => {
           <Col md={6}>
             <FormGroup>
               <Label className="form-label">
-                Empresa » Nome Fantasia
-              </Label>
-              <Input
-                type="text"
-                name="companyNickname"
-                value={formData.companyNickname}
-                onChange={handleInputChange}
-                placeholder="Nome Fantasia (se disponível)"
-                className="form-control"
-              />
-              {formData.company && !formData.companyNickname && (
-                <small className="text-muted d-flex align-items-center mt-1">
-                  <i className="mdi mdi-information-outline me-1"></i>
-                  Nome fantasia não disponível
-                </small>
-              )}
-            </FormGroup>
-          </Col>
-        </Row>
-
-        <Row>
-          <Col md={6}>
-            <FormGroup>
-              <Label className="form-label">
                 Pessoa » Telefone
               </Label>
               <Input
@@ -341,20 +364,6 @@ const NewOpportunities = ({ isOpen, toggle }) => {
                 value={formData.phone}
                 onChange={handleInputChange}
                 placeholder="Telefone"
-              />
-            </FormGroup>
-          </Col>
-          <Col md={6}>
-            <FormGroup>
-              <Label className="form-label">
-                Pessoa » E-mail
-              </Label>
-              <Input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="E-mail"
               />
             </FormGroup>
           </Col>
@@ -384,59 +393,32 @@ const NewOpportunities = ({ isOpen, toggle }) => {
           <Col md={6}>
             <FormGroup>
               <Label className="form-label">
-                <span className="text-danger">*</span> Oportunidade » Etapa do funil: Cadastro
+                Pessoa » E-mail
               </Label>
-              <div className="bg-light p-2 rounded-0">
-                {/* Barra de progresso do funil com a primeira etapa ativa */}
-                <div className="d-flex justify-content-between" style={{ height: "40px" }}>
-                  {funnelStages.map((stage, index) => (
-                    <div 
-                      key={stage.id}
-                      className={`rounded-0 ${index > 0 ? 'mx-1' : ''}`} 
-                      style={{ 
-                        width: `${100 / funnelStages.length}%`, 
-                        height: "100%",
-                        backgroundColor: stage.id === 0 ? '#28a745' : '#6c757d',
-                        opacity: stage.id === 0 ? 1 : 0.5,
-                        cursor: stage.id === 0 ? 'pointer' : 'not-allowed',
-                        position: 'relative'
-                      }}
-                      title={stage.name}
-                    >
-                      {/* Número da etapa no centro do bloco */}
-                      <div style={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        color: 'white',
-                        fontWeight: 'bold',
-                        fontSize: '14px'
-                      }}>
-                        {stage.id + 1}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                
-                {/* Nomes das etapas abaixo da barra */}
-                <div className="d-flex justify-content-between mt-1">
-                  {funnelStages.map((stage, index) => (
-                    <div 
-                      key={`name-${stage.id}`}
-                      className="text-center" 
-                      style={{ 
-                        width: `${100 / funnelStages.length}%`,
-                        fontSize: '10px',
-                        color: stage.id === 0 ? '#28a745' : '#6c757d',
-                        fontWeight: stage.id === 0 ? 'bold' : 'normal'
-                      }}
-                    >
-                      {stage.name}
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <Input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="E-mail"
+              />
+            </FormGroup>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col md={6}>
+            <FormGroup>
+              <Label className="form-label">
+                <span className="text-danger">*</span> Oportunidade » Título
+              </Label>
+              <Input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                placeholder="Título"
+              />
             </FormGroup>
           </Col>
         </Row>

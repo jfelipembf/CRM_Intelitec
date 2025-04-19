@@ -180,6 +180,12 @@ const SidebarContent = (props) => {
               </Link>
             </li>
             <li>
+              <Link to="/filtrar-oportunidades">
+                <i className="bx bx-filter-alt"></i>
+                <span>{props.t("Filtrar Oportunidades")}</span>
+              </Link>
+            </li>
+            <li>
               <Link to="/relatorios">
                 <i className="bx bx-bar-chart-alt-2"></i>
                 <span>{props.t("Relatórios")}</span>

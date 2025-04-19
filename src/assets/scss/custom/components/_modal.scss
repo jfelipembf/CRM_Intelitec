@@ -1,0 +1,124 @@
+// 
+// _modal.scss e estilos para a tela de filtro
+// 
+
+// Tela de filtro de oportunidades
+.filter-screen {
+  position: fixed;
+  top: 70px; // Ajustar conforme a altura do header
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #fff;
+  z-index: 1030;
+  overflow-y: auto;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.page-content {
+  padding: 20px 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Ajustes para evitar o movimento do header quando a tela é aberta
+body {
+  &.filter-open {
+    overflow: hidden;
+    
+    #page-topbar {
+      padding-right: 0 !important;
+    }
+  }
+}
+
+// Estilos para os cartões na tela de filtro
+.card {
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+  margin-bottom: 24px;
+  
+  .card-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  
+  .card-body {
+    padding: 20px;
+  }
+  
+  .card-footer {
+    padding: 15px 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+  }
+}
+
+// Estilos para os campos de formulário
+.form-group {
+  margin-bottom: 1rem;
+  
+  .form-label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    font-size: 0.875rem;
+  }
+  
+  .form-select,
+  .form-control {
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    
+    &:focus {
+      border-color: #80bdff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+  }
+}
+
+// Estilos para badges e indicadores
+.badge {
+  font-weight: 500;
+  padding: 0.35em 0.65em;
+  border-radius: 50rem;
+}
+
+// Botões da tela de filtro
+.btn {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  border-radius: 4px;
+  font-weight: 500;
+  
+  &.btn-primary {
+    background-color: #556ee6;
+    border-color: #556ee6;
+    
+    &:hover {
+      background-color: #4458b8;
+      border-color: #4458b8;
+    }
+  }
+  
+  &.btn-light {
+    background-color: #f8f9fa;
+    border-color: #f8f9fa;
+    
+    &:hover {
+      background-color: #e2e6ea;
+      border-color: #dae0e5;
+    }
+  }
+} 

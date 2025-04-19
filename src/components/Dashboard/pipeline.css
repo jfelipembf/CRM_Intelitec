@@ -283,3 +283,18 @@
   height: 100%;
   object-fit: cover;
 }
+
+.pipeline-card {
+  transition: all 0.2s ease-in-out;
+}
+
+.pipeline-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+  border-color: rgba(13, 110, 253, 0.5) !important;
+}
+
+.pipeline-card.dragging-card {
+  transform: rotate(3deg);
+  opacity: 0.8;
+}
