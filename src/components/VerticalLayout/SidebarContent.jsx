@@ -167,6 +167,13 @@ const SidebarContent = (props) => {
                 <span>{props.t("Atividades")}</span>
               </Link>
             </li>
+            
+            <li>
+              <Link to="/mensagens">
+                <i className="bx bx-message-square-dots"></i>
+                <span>{props.t("Mensagens")}</span>
+              </Link>
+            </li>
           
             <li>
               <Link to="/filtrar-oportunidades">
