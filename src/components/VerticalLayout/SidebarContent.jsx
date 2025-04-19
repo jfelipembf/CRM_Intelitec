@@ -162,29 +162,12 @@ const SidebarContent = (props) => {
               </Link>
             </li>
             <li>
-              <Link to="/calendario">
-                <i className="bx bx-calendar"></i>
-                <span>{props.t("Calendário")}</span>
-              </Link>
-            </li>
-            <li>
               <Link to="/atividades">
                 <i className="bx bx-calendar-event"></i>
                 <span>{props.t("Atividades")}</span>
               </Link>
             </li>
-            <li>
-              <Link to="/tarefas">
-                <i className="bx bx-task"></i>
-                <span>{props.t("Tarefas")}</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/oportunidades">
-                <i className="bx bx-dollar-circle"></i>
-                <span>{props.t("Oportunidades")}</span>
-              </Link>
-            </li>
+          
             <li>
               <Link to="/filtrar-oportunidades">
                 <i className="bx bx-filter-alt"></i>
@@ -192,17 +175,12 @@ const SidebarContent = (props) => {
               </Link>
             </li>
             <li>
-              <Link to="/relatorios">
-                <i className="bx bx-bar-chart-alt-2"></i>
-                <span>{props.t("Relatórios")}</span>
+              <Link to="/employees">
+                <i className="bx bx-user-pin"></i>
+                <span>{props.t("Colaboradores")}</span>
               </Link>
             </li>
-            <li>
-              <Link to="/configuracoes">
-                <i className="bx bx-cog"></i>
-                <span>{props.t("Configurações")}</span>
-              </Link>
-            </li>
+            
           </ul>
         </div>
       </SimpleBar>

@@ -559,9 +559,6 @@ const Activities = (props) => {
     <React.Fragment>
       <div className="page-content" style={{ backgroundColor: "#f8f9fa" }}>
         <Container fluid>
-          {/* Breadcrumbs */}
-          
-
           <Row>
             <Col xs={12}>
               <Card className="shadow-sm" style={{ backgroundColor: "#ffffff" }}>
@@ -571,32 +568,35 @@ const Activities = (props) => {
                     <div className="d-flex align-items-center">
                       <h5 className="mb-0 me-3 text-dark">{formatDateRange()}</h5>
                       <ButtonGroup className="me-3">
-                        <Button color="light" onClick={goToPrevious}>
-                          <i className="mdi mdi-chevron-left"></i>
+                        <Button color="light" size="sm" onClick={goToPrevious}>
+                          <i className="bx bx-chevron-left"></i>
                         </Button>
-                        <Button color="light" onClick={goToNext}>
-                          <i className="mdi mdi-chevron-right"></i>
+                        <Button color="light" size="sm" onClick={goToNext}>
+                          <i className="bx bx-chevron-right"></i>
                         </Button>
                       </ButtonGroup>
-                      <Button color="success" onClick={goToToday}>Hoje</Button>
+                      <Button color="light" size="sm" onClick={goToToday}>Hoje</Button>
                     </div>
                     
                     <div className="d-flex">
                       <ButtonGroup className="me-3">
                         <Button 
-                          color={viewMode === 'day' ? 'success' : 'light'} 
+                          color={viewMode === 'day' ? 'primary' : 'light'} 
+                          size="sm"
                           onClick={() => setViewMode('day')}
                         >
                           Dia
                         </Button>
                         <Button 
-                          color={viewMode === 'week' ? 'success' : 'light'} 
+                          color={viewMode === 'week' ? 'primary' : 'light'} 
+                          size="sm"
                           onClick={() => setViewMode('week')}
                         >
                           Semana
                         </Button>
                         <Button 
-                          color={viewMode === 'month' ? 'success' : 'light'} 
+                          color={viewMode === 'month' ? 'primary' : 'light'} 
+                          size="sm"
                           onClick={() => setViewMode('month')}
                         >
                           Mês
@@ -604,8 +604,8 @@ const Activities = (props) => {
                       </ButtonGroup>
                       
                       <Dropdown isOpen={dropdownOpen} toggle={toggle}>
-                        <DropdownToggle color="success" caret>
-                          <i className="mdi mdi-plus me-1"></i> Criar
+                        <DropdownToggle color="primary" size="sm" caret>
+                          <i className="bx bx-plus me-1"></i> Adicionar Atividade
                         </DropdownToggle>
                         <DropdownMenu>
                           <DropdownItem onClick={() => handleCreateActivityType("Reunião")}>Reunião</DropdownItem>
@@ -620,15 +620,20 @@ const Activities = (props) => {
 
                   {/* Filtro Rápido */}
                   <div className="mb-4 d-flex search-container">
-                    <Input 
-                      type="text" 
-                      placeholder="Buscar atividades..."
-                      className="me-2"
-                      style={{ maxWidth: '300px' }}
-                    />
-                    <Button color="primary" outline>
-                      <i className="mdi mdi-magnify"></i>
-                    </Button>
+                    <div className="position-relative" style={{ maxWidth: '300px', width: '100%' }}>
+                      <div className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">
+                        <i className="bx bx-search-alt"></i>
+                      </div>
+                      <Input 
+                        type="text" 
+                        placeholder="Buscar atividades..."
+                        className="form-control ps-4"
+                        style={{ paddingLeft: '2.5rem' }}
+                      />
+                      <div className="position-absolute end-0 top-50 translate-middle-y me-3" style={{ cursor: 'pointer' }}>
+                        <i className="bx bx-x text-muted"></i>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Calendário - Visualização Semanal */}
@@ -863,7 +868,7 @@ const Activities = (props) => {
                                               
                                               <div className="d-flex justify-content-between align-items-center mt-1">
                                                 <div className="d-flex align-items-center text-muted">
-                                                  <i className="mdi mdi-account-outline me-1" style={{fontSize: '10px'}}></i>
+                                                  <i className="bx bx-user me-1" style={{fontSize: '10px'}}></i>
                                                   <span style={{fontSize: '10px'}}>Felipe</span>
                                                 </div>
                                                 
@@ -871,7 +876,7 @@ const Activities = (props) => {
                                                   className="d-flex align-items-center justify-content-center text-white"
                                                   style={{ 
                                                     padding: '1px 6px',
-                                                    backgroundColor: '#2ecc71',
+                                                    backgroundColor: '#4e67f8',
                                                     borderRadius: '3px',
                                                     fontSize: '11px'
                                                   }}
@@ -880,7 +885,7 @@ const Activities = (props) => {
                                                     alert(`Iniciando atividade: ${event.title}`);
                                                   }}
                                                 >
-                                                  <i className="mdi mdi-clock-outline me-1"></i>
+                                                  <i className="bx bx-time me-1"></i>
                                                   <strong>60</strong>
                                                 </div>
                                               </div>
@@ -1013,15 +1018,15 @@ const Activities = (props) => {
                                           
                                           <div className="d-flex justify-content-between align-items-center mt-2">
                                             <div className="d-flex align-items-center text-muted small">
-                                              <i className="mdi mdi-account-outline me-1"></i>
-                                              <span style={{fontSize: '11px'}}>Felipe</span>
+                                              <i className="bx bx-user me-1" style={{fontSize: '10px'}}></i>
+                                              <span style={{fontSize: '10px'}}>Felipe</span>
                                             </div>
                                             
                                             <div 
                                               className="d-flex align-items-center justify-content-center text-white"
                                               style={{ 
                                                 padding: '1px 6px',
-                                                backgroundColor: '#2ecc71',
+                                                backgroundColor: '#4e67f8',
                                                 borderRadius: '3px',
                                                 fontSize: '11px'
                                               }}
@@ -1030,7 +1035,7 @@ const Activities = (props) => {
                                                 alert(`Iniciando atividade: ${event.title}`);
                                               }}
                                             >
-                                              <i className="mdi mdi-clock-outline me-1"></i>
+                                              <i className="bx bx-time me-1"></i>
                                               <strong>60</strong>
                                             </div>
                                           </div>
@@ -1200,7 +1205,7 @@ const Activities = (props) => {
               <div className="p-3 bg-light border-bottom d-flex justify-content-between align-items-center" 
                    style={{ borderTopLeftRadius: '8px', borderTopRightRadius: '8px', borderBottom: '1px solid #e9e9e9' }}>
                 <h6 className="m-0 text-dark fw-bold">
-                  <i className="mdi mdi-calendar-edit me-1 text-success"></i>
+                  <i className="bx bx-calendar-edit me-1 text-primary"></i>
                   {formData.id ? 'Editar atividade' : 'Nova atividade'}
                 </h6>
                 <button 
@@ -1381,16 +1386,16 @@ const Activities = (props) => {
                   <div className="d-flex justify-content-between mt-3">
                     <button
                       type="button"
-                      className="btn btn-sm btn-success me-2"
+                      className="btn btn-sm btn-primary me-2"
                       onClick={saveActivity}
                       style={{ 
                         width: '80%', 
                         fontWeight: 'bold',
-                        boxShadow: '0 2px 4px rgba(43, 177, 115, 0.3)',
+                        boxShadow: '0 2px 4px rgba(52, 143, 226, 0.3)',
                         transition: 'all 0.2s ease'
                       }}
                     >
-                      <i className="mdi mdi-content-save me-1"></i> Salvar atividade
+                      <i className="bx bx-save me-1"></i> Salvar atividade
                     </button>
                     <button
                       type="button"
@@ -1398,7 +1403,7 @@ const Activities = (props) => {
                       onClick={() => setShowForm(false)}
                       style={{ width: '20%' }}
                     >
-                      <i className="mdi mdi-trash-can-outline"></i>
+                      <i className="bx bx-trash-alt"></i>
                     </button>
                   </div>
                 </form>

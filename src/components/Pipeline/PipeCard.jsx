@@ -37,14 +37,11 @@ const PipeCard = ({ opportunity, onDragStart }) => {
   
   // Determinar o estilo do card com base no status de atraso
   const cardStyle = isOverdue() ? { 
-    backgroundColor: 'rgba(255, 192, 203, 0.15)',  // Rosa claro para cards atrasados
-    borderLeft: '3px solid #ff6b81' // Borda rosa à esquerda 
+    borderLeft: '3px solid #ff6b81' // Borda rosa à esquerda para cards atrasados
   } : opportunity.sold ? {
-    backgroundColor: 'rgba(152, 251, 152, 0.15)', // Verde claro para oportunidades vendidas
-    borderLeft: '3px solid #28a745' // Borda verde à esquerda
+    borderLeft: '3px solid #28a745' // Borda verde à esquerda para oportunidades vendidas
   } : {
     // Estilo para cards normais (não vencidos, não vendidos)
-    backgroundColor: 'rgba(255, 255, 255, 1)',
     borderLeft: '3px solid #17a2b8' // Borda azul para cards normais
   };
   
@@ -109,7 +106,7 @@ const PipeCard = ({ opportunity, onDragStart }) => {
   
   return (
     <Card 
-      className={`mb-2 border shadow-none pipeline-card ${isOverdue() ? 'overdue-card' : ''} ${opportunity.sold ? 'sold-card' : ''} ${!isOverdue() && !opportunity.sold ? 'normal-card' : ''}`}
+      className={`mb-2 border shadow-sm pipeline-card ${isOverdue() ? 'overdue-card' : ''} ${opportunity.sold ? 'sold-card' : ''} ${!isOverdue() && !opportunity.sold ? 'normal-card' : ''}`}
       draggable="true"
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
@@ -119,38 +116,41 @@ const PipeCard = ({ opportunity, onDragStart }) => {
       style={{...cardStyle, cursor: 'pointer'}}
     >
       <div className="p-2">
-        {/* Cabeçalho com título e badge de probabilidade */}
-        <div className="d-flex justify-content-between align-items-center mb-2">
-          <h6 className="mb-0 text-truncate" style={{ maxWidth: "180px" }}>
-            {opportunity.name}
-          </h6>
-          <span className={`badge bg-${opportunity.probability >= 70 ? 'success' : opportunity.probability >= 40 ? 'warning' : 'danger'} rounded-pill fs-10`}>
-            {opportunity.probability}%
-          </span>
-        </div>
-
-        {/* Status de vendida (se aplicável) */}
+        {/* Status de vendida (badge na parte superior) */}
         {opportunity.sold && (
-          <div className="mb-2">
-            <span className="badge bg-success rounded-pill w-100 text-center">
+          <div className="position-absolute end-0 top-0 mt-2 me-2">
+            <span className="badge bg-success rounded-pill px-2 py-1">
               <i className="mdi mdi-check-circle me-1"></i>Vendida
             </span>
           </div>
         )}
+        
+        {/* Cabeçalho com título e badge de probabilidade */}
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          <h6 className="mb-0 text-truncate fw-medium" style={{ maxWidth: opportunity.sold ? "170px" : "210px" }}>
+            {opportunity.name}
+          </h6>
+          <span className={`badge ${opportunity.probability >= 70 ? 'bg-success' : opportunity.probability >= 40 ? 'bg-warning' : 'bg-danger'} rounded-pill fs-11`}>
+            {opportunity.probability}%
+          </span>
+        </div>
 
         {/* Informações da empresa */}
         <div className="text-muted small d-flex align-items-center mb-2">
           <i className="mdi mdi-office-building-outline me-1"></i>
-          <span className="text-truncate" style={{ maxWidth: "200px" }}>
+          <span className="text-truncate" style={{ maxWidth: "240px" }}>
             {opportunity.company}
           </span>
         </div>
+
+        {/* Linha separadora */}
+        <hr className="my-2" style={{ opacity: 0.1 }} />
 
         {/* Valor da oportunidade */}
         <div className="small mb-2">
           <div className="d-flex align-items-center">
             <i className="mdi mdi-cash-multiple me-1 text-success"></i>
-            <span>{formatCurrency(opportunity.amount)}</span>
+            <span className="fw-medium">{formatCurrency(opportunity.amount)}</span>
           </div>
           {opportunity.recurrent && (
             <div className="d-flex align-items-center mt-1">
@@ -165,7 +165,7 @@ const PipeCard = ({ opportunity, onDragStart }) => {
           <div className="d-flex align-items-center">
             <i className={`mdi mdi-calendar me-1 ${isOverdue() ? 'text-danger' : ''}`}></i>
             <span className={isOverdue() ? 'text-danger fw-medium' : ''}>
-              {opportunity.dueDate}
+              {opportunity.dueDate} {isOverdue() && <small>(Atrasado)</small>}
             </span>
           </div>
         </div>

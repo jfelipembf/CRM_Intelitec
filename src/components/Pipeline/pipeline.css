@@ -1,7 +1,14 @@
+/* Estilos para o container do pipeline */
+.pipeline-container {
+  background-color: #f8f9fa;
+  border-radius: 0 0 6px 6px;
+  overflow: hidden;
+}
+
 /* Estilos para arrastar o pipeline */
 .pipeline-scroll-container {
-  margin: 0 -10px;
-  padding: 0 10px;
+  margin: 0;
+  padding: 14px;
   position: relative;
   overflow-x: auto !important;
   touch-action: pan-x !important;
@@ -34,23 +41,43 @@
 
 /* Estilo para os estágios do pipeline */
 .pipeline-stage {
-  transition: transform 0.15s ease;
-  flex: 0 0 260px !important;
-  min-width: 260px !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  flex: 0 0 300px !important;
+  min-width: 300px !important;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  margin: 0 4px;
+  border: 1px solid rgba(0,0,0,0.05);
+  overflow: hidden;
 }
 
 /* Efeito hover para estágios do pipeline */
 .pipeline-stage:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* Estilo para o cabeçalho de cada estágio */
+.pipeline-stage-header {
+  padding: 12px 16px;
+  background-color: rgba(0,0,0,0.02);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 /* Estilos para drag & drop */
 .pipeline-card {
   cursor: grab;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   animation: card-enter 0.3s forwards;
   position: relative;
   z-index: 1;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 @keyframes card-enter {
@@ -66,33 +93,35 @@
 
 .pipeline-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08) !important;
+  z-index: 5;
 }
 
 .pipeline-card.dragging-card {
-  opacity: 0.6;
-  transform: scale(0.98);
+  opacity: 0.75;
+  transform: scale(0.98) rotate(1deg);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+  z-index: 100;
 }
 
 /* Estilo para cards atrasados */
 .pipeline-card.overdue-card {
-  background-color: rgba(255, 192, 203, 0.15) !important;
+  background-color: rgba(255, 192, 203, 0.05) !important;
   border-left: 3px solid #ff6b81 !important;
 }
 
 .pipeline-card.overdue-card:hover {
-  box-shadow: 0 3px 10px rgba(255, 107, 129, 0.3) !important;
+  box-shadow: 0 3px 10px rgba(255, 107, 129, 0.15) !important;
 }
 
 /* Estilo para cards de oportunidades vendidas */
 .pipeline-card.sold-card {
-  background-color: rgba(152, 251, 152, 0.15) !important;
+  background-color: rgba(152, 251, 152, 0.05) !important;
   border-left: 3px solid #28a745 !important;
 }
 
 .pipeline-card.sold-card:hover {
-  box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3) !important;
+  box-shadow: 0 3px 10px rgba(40, 167, 69, 0.15) !important;
 }
 
 /* Estilo para cards normais (não vencidos, não vendidos) */
@@ -102,31 +131,31 @@
 }
 
 .pipeline-card.normal-card:hover {
-  box-shadow: 0 3px 10px rgba(23, 162, 184, 0.3) !important;
+  box-shadow: 0 3px 10px rgba(23, 162, 184, 0.15) !important;
 }
 
 /* Estilo especial para a etapa de Fechamento */
 .pipeline-stage:last-child .pipeline-stage-header {
-  background-color: rgba(40, 167, 69, 0.1);
-  border-bottom: 2px solid rgba(40, 167, 69, 0.3);
+  background-color: rgba(40, 167, 69, 0.05);
+  border-bottom: 1px solid rgba(40, 167, 69, 0.1);
 }
 
 .pipeline-stage:last-child {
-  box-shadow: 0 0 10px rgba(40, 167, 69, 0.2);
+  box-shadow: 0 2px 10px rgba(40, 167, 69, 0.1);
 }
 
 .pipeline-stage:last-child .border {
-  border-color: rgba(40, 167, 69, 0.3) !important;
+  border-color: rgba(40, 167, 69, 0.2) !important;
 }
 
 /* Estilo especial para cards na etapa de Fechamento que não foram vendidos ainda */
 .pipeline-stage:last-child .pipeline-card:not(.sold-card) {
-  background-color: rgba(255, 193, 7, 0.1) !important;
+  background-color: rgba(255, 193, 7, 0.05) !important;
   border-left: 3px solid #ffc107 !important;
 }
 
 .pipeline-stage:last-child .pipeline-card:not(.sold-card):hover {
-  box-shadow: 0 3px 10px rgba(255, 193, 7, 0.3) !important;
+  box-shadow: 0 3px 10px rgba(255, 193, 7, 0.15) !important;
 }
 
 /* Dropzone e áreas relacionadas */
@@ -134,12 +163,12 @@
   transition: background-color 0.2s ease;
   min-height: 100px;
   position: relative;
+  padding: 4px 10px;
 }
 
 .pipeline-dropzone.drag-over {
-  background-color: rgba(0, 123, 255, 0.1);
-  border: 1px dashed #007bff;
-  border-radius: 4px;
+  background-color: rgba(0, 123, 255, 0.08);
+  border-radius: 6px;
 }
 
 /* Overlay para capturar eventos de drop mesmo com muitos cards */
@@ -161,7 +190,7 @@
 
 /* Espaço extra no final da lista para facilitar o drop */
 .pipeline-dropzone-end-spacer {
-  min-height: 100px;
+  min-height: 80px;
   width: 100%;
 }
 
@@ -170,8 +199,12 @@
 }
 
 .pipeline-empty-placeholder {
-  opacity: 0.7;
+  opacity: 0.6;
   transition: opacity 0.3s ease;
+  text-align: center;
+  padding: 15px 10px;
+  color: #6c757d;
+  font-size: 0.9rem;
 }
 
 .pipeline-dropzone.drag-over .pipeline-empty-placeholder {
@@ -185,7 +218,7 @@
   color: #007bff;
   font-weight: 500;
   border: 1px dashed rgba(0, 123, 255, 0.5);
-  border-radius: 4px;
+  border-radius: 6px;
   margin: 8px 0;
   animation: pulse 1.5s infinite;
   position: relative;
@@ -210,14 +243,19 @@
 
 /* Estilos para a visualização em lista */
 .list-view-container {
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  background-color: #fff;
+  margin: 16px;
 }
 
 .list-header {
   font-size: 14px;
   color: #495057;
+  background-color: rgba(0,0,0,0.02);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  padding: 12px 16px;
 }
 
 .list-body {
@@ -241,6 +279,7 @@
   font-size: 14px;
   transition: background-color 0.2s;
   cursor: pointer;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
 .list-item:hover {
@@ -251,31 +290,33 @@
   background-color: rgba(0, 123, 255, 0.1);
 }
 
-/* Estilos para os diferentes tipos de visualização em lista */
 .list-view-simple .list-item {
-  padding: 8px 12px;
+  padding: 12px 16px;
 }
 
 .list-view-detailed .list-item {
-  padding: 12px;
+  padding: 16px;
 }
 
 .list-view-cards {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  padding: 12px;
+  padding: 16px;
+  gap: 16px;
 }
 
-/* Estilos para o avatar-circle */
+/* Estilo para avatares */
 .avatar-circle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 32px;
   height: 32px;
   border-radius: 50%;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+  color: #6c757d;
+  font-weight: 500;
 }
 
 .avatar-circle img {
@@ -284,17 +325,43 @@
   object-fit: cover;
 }
 
-.pipeline-card {
-  transition: all 0.2s ease-in-out;
+/* Indicadores de status nas colunas */
+.stage-status-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
 }
 
-.pipeline-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
-  border-color: rgba(13, 110, 253, 0.5) !important;
+.indicator-prospecting {
+  background-color: #17a2b8;
 }
 
-.pipeline-card.dragging-card {
-  transform: rotate(3deg);
-  opacity: 0.8;
+.indicator-qualification {
+  background-color: #6f42c1;
+}
+
+.indicator-proposal {
+  background-color: #fd7e14;
+}
+
+.indicator-negotiation {
+  background-color: #007bff;
+}
+
+.indicator-closing {
+  background-color: #28a745;
+}
+
+/* Estilos para responsividade em telas pequenas */
+@media (max-width: 768px) {
+  .pipeline-stage {
+    flex: 0 0 250px !important;
+    min-width: 250px !important;
+  }
+  
+  .pipeline-card:hover {
+    transform: none;
+  }
 }

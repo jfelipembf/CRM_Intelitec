@@ -1,7 +1,19 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { withTranslation } from "react-i18next";
-import { Alert, Button, ButtonGroup, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import { 
+  Alert, 
+  Button, 
+  ButtonGroup, 
+  Modal, 
+  ModalHeader, 
+  ModalBody, 
+  ModalFooter,
+  Row,
+  Col,
+  InputGroup,
+  Input
+} from "reactstrap";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./pipeline.css";
@@ -19,7 +31,7 @@ import avatar7 from "../../assets/images/users/avatar-7.jpg";
 import avatar8 from "../../assets/images/users/avatar-8.jpg";
 
 const Pipeline = props => {
-  const { t } = props;
+  const { t, funnelId, isEditing, funnelName, viewMode: externalViewMode, setViewMode: externalSetViewMode, hideControls, stageHeight } = props;
   const scrollContainerRef = useRef(null);
   
   // Estado para armazenar as oportunidades
@@ -29,7 +41,11 @@ const Pipeline = props => {
   const [feedback, setFeedback] = useState(null);
   
   // Estado para controlar o tipo de visualização (pipeline ou lista)
-  const [viewMode, setViewMode] = useState('pipeline');
+  const [internalViewMode, setInternalViewMode] = useState('pipeline');
+  
+  // Usar props externas de visualização se estiverem disponíveis, ou estado interno caso contrário
+  const effectiveViewMode = externalViewMode !== undefined ? externalViewMode : internalViewMode;
+  const effectiveSetViewMode = externalSetViewMode || setInternalViewMode;
   
   // Estado para controlar o tipo de visualização em lista (simplificada, detalhada, cards)
   const [listViewType, setListViewType] = useState('simple');
@@ -41,6 +57,90 @@ const Pipeline = props => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   
+  // Estados para gerenciamento de funis personalizados
+  const [isEditingStages, setIsEditingStages] = useState(isEditing || false);
+  const [funnelData, setFunnelData] = useState(null);
+  const [newStageName, setNewStageName] = useState("");
+  
+  // Use o funnelId e funnelName recebidos por props
+  useEffect(() => {
+    // Se estiver em modo de edição, inicializa o estado do funil
+    if (isEditing && funnelId) {
+      setIsEditingStages(true);
+      setFunnelData({
+        id: funnelId,
+        name: funnelName || "Novo Funil Personalizado",
+        stages: []
+      });
+    } else {
+      setIsEditingStages(false);
+    }
+  }, [funnelId, funnelName, isEditing]);
+  
+  // Adicionar nova etapa ao funil em edição
+  const addStageToFunnel = () => {
+    if (newStageName.trim() && funnelData) {
+      const newStage = {
+        id: funnelData.stages.length + 1,
+        title: newStageName.trim(),
+        count: 0,
+        percent: "0%",
+        totalAmount: formatCurrency(0),
+        icon: "mdi-tag-outline"
+      };
+      
+      setFunnelData({
+        ...funnelData,
+        stages: [...funnelData.stages, newStage]
+      });
+      
+      setNewStageName("");
+      
+      // Mostrar feedback
+      toast.success(`Etapa "${newStage.title}" adicionada ao funil`, {
+        position: "top-right",
+        autoClose: 3000
+      });
+    }
+  };
+  
+  // Remover etapa do funil em edição
+  const removeStageFromFunnel = (stageId) => {
+    if (funnelData) {
+      const updatedStages = funnelData.stages.filter(stage => stage.id !== stageId);
+      setFunnelData({
+        ...funnelData,
+        stages: updatedStages
+      });
+      
+      // Mostrar feedback
+      toast.info(`Etapa removida do funil`, {
+        position: "top-right",
+        autoClose: 3000
+      });
+    }
+  };
+  
+  // Salvar o funil personalizado
+  const saveFunnel = () => {
+    if (funnelData && funnelData.stages.length > 0) {
+      // Aqui seria a lógica para salvar o funil no backend
+      toast.success(`Funil "${funnelData.name}" salvo com sucesso!`, {
+        position: "top-right",
+        autoClose: 3000
+      });
+      
+      // Redirecionar para o pipeline normal (remover parâmetros de URL)
+      window.history.replaceState({}, document.title, window.location.pathname);
+      setIsEditingStages(false);
+    } else {
+      toast.error(`É necessário adicionar pelo menos uma etapa ao funil`, {
+        position: "top-right",
+        autoClose: 3000
+      });
+    }
+  };
+  
   // Calcular totais e agrupar oportunidades por estágio
   const { 
     totalOpportunities, 
@@ -51,7 +151,7 @@ const Pipeline = props => {
   
   // Função para alternar o tipo de visualização
   const toggleViewMode = () => {
-    setViewMode(viewMode === 'pipeline' ? 'list' : 'pipeline');
+    effectiveSetViewMode(effectiveViewMode === 'pipeline' ? 'list' : 'pipeline');
     // Limpar seleções ao alternar visualização
     setSelectedOpportunities([]);
   };
@@ -258,7 +358,7 @@ const Pipeline = props => {
   // Função para habilitar a rolagem com arrasto do mouse e touch
   useEffect(() => {
     // Somente configurar o arrasto se estiver na visualização de pipeline e o container existir
-    if (viewMode !== 'pipeline' || !scrollContainerRef.current) return;
+    if (effectiveViewMode !== 'pipeline' || !scrollContainerRef.current) return;
     
     const slider = scrollContainerRef.current;
     let isDown = false;
@@ -372,7 +472,7 @@ const Pipeline = props => {
       // Log para debug
       console.log('Eventos de arrasto removidos');
     };
-  }, [viewMode]); // Adicionar viewMode como dependência para reconfigurar quando mudar
+  }, [effectiveViewMode]); // Adicionar effectiveViewMode como dependência para reconfigurar quando mudar
 
   // Event listener global para drag
   useEffect(() => {
@@ -618,16 +718,210 @@ const Pipeline = props => {
   }, []);
 
   return (
-    <React.Fragment>
-      {/* Feedback para o usuário usando Alert */}
-      {feedback && (
-        <Alert 
-          color={feedback.type} 
-          className="mb-3 position-absolute top-0 end-0 m-3" 
-          style={{ zIndex: 1050, maxWidth: '350px' }}
-        >
-          {feedback.message}
-        </Alert>
+    <div className="pipeline-container">
+      {/* Cabeçalho com as opções do pipeline */}
+      {!hideControls && (
+        <div className="p-3 bg-white border-bottom">
+          <Row className="g-2 align-items-center">
+            <Col sm={12} md={4} className="mb-2 mb-md-0">
+              {isEditingStages ? (
+                <div className="d-flex align-items-center">
+                  <div className="me-2 d-flex justify-content-center align-items-center rounded-circle bg-primary bg-opacity-10 text-primary" style={{ width: '40px', height: '40px' }}>
+                    <i className="bx bx-cog fs-5"></i>
+                  </div>
+                  <div>
+                    <h5 className="mb-0 text-primary">{funnelData?.name || "Novo Funil"}</h5>
+                    <div className="small text-muted">Configure as etapas deste funil</div>
+                  </div>
+                </div>
+              ) : (
+                <InputGroup className="search-box">
+                  <Input
+                    type="text"
+                    className="form-control"
+                    placeholder="Buscar oportunidades..."
+                    aria-label="Buscar oportunidades"
+                  />
+                  <div className="input-group-text bg-primary text-white">
+                    <i className="mdi mdi-magnify"></i>
+                  </div>
+                </InputGroup>
+              )}
+            </Col>
+            
+            {isEditingStages ? (
+              <>
+                <Col sm={12} md={4} className="mb-2 mb-md-0">
+                  <InputGroup>
+                    <Input
+                      type="text"
+                      placeholder="Nome da nova etapa"
+                      value={newStageName}
+                      onChange={(e) => setNewStageName(e.target.value)}
+                    />
+                    <Button 
+                      color="primary" 
+                      onClick={addStageToFunnel}
+                      disabled={!newStageName.trim()}
+                    >
+                      <i className="bx bx-plus me-1"></i> Adicionar
+                    </Button>
+                  </InputGroup>
+                </Col>
+                <Col sm={12} md={4} className="d-flex justify-content-end">
+                  <Button 
+                    color="success" 
+                    onClick={saveFunnel}
+                    disabled={!funnelData || funnelData.stages.length === 0}
+                  >
+                    <i className="bx bx-check-circle me-1"></i> Salvar Funil
+                  </Button>
+                </Col>
+              </>
+            ) : (
+              <>
+                <Col sm={6} md={4} className="d-flex justify-content-center justify-content-md-start">
+                  <div className="d-flex align-items-center gap-2">
+                    <ButtonGroup>
+                      <Button
+                        color={effectiveViewMode === 'pipeline' ? 'primary' : 'light'}
+                        onClick={() => effectiveSetViewMode('pipeline')}
+                        className="fw-medium"
+                        size="sm"
+                      >
+                        <i className="bx bx-chart me-1"></i> Pipeline
+                      </Button>
+                      <Button
+                        color={effectiveViewMode === 'list' ? 'primary' : 'light'}
+                        onClick={() => effectiveSetViewMode('list')}
+                        className="fw-medium"
+                        size="sm"
+                      >
+                        <i className="bx bx-list-ul me-1"></i> Lista
+                      </Button>
+                    </ButtonGroup>
+                    
+                    {effectiveViewMode === 'list' && (
+                      <ButtonGroup className="ms-2">
+                        <Button
+                          color={listViewType === 'simple' ? 'info' : 'light'}
+                          onClick={() => setListViewType('simple')}
+                          className="btn-sm"
+                          size="sm"
+                        >
+                          <i className="bx bx-list-ul"></i>
+                        </Button>
+                        <Button
+                          color={listViewType === 'detailed' ? 'info' : 'light'}
+                          onClick={() => setListViewType('detailed')}
+                          className="btn-sm"
+                          size="sm"
+                        >
+                          <i className="bx bx-detail"></i>
+                        </Button>
+                        <Button
+                          color={listViewType === 'cards' ? 'info' : 'light'}
+                          onClick={() => setListViewType('cards')}
+                          className="btn-sm"
+                          size="sm"
+                        >
+                          <i className="bx bx-grid-alt"></i>
+                        </Button>
+                      </ButtonGroup>
+                    )}
+                  </div>
+                </Col>
+                
+                <Col sm={6} md={4} className="d-flex justify-content-end">
+                  <div className="d-flex gap-2">
+                    {effectiveViewMode === 'list' && selectedOpportunities.length > 0 && (
+                      <>
+                        <Button
+                          color="danger"
+                          outline
+                          onClick={handleDeleteSelected}
+                          className="btn-sm"
+                          title="Excluir selecionados"
+                        >
+                          <i className="bx bx-trash me-1"></i> Excluir
+                        </Button>
+                        <Button
+                          color="success"
+                          outline
+                          onClick={handleMarkAsSold}
+                          className="btn-sm"
+                          title="Marcar como vendido"
+                        >
+                          <i className="bx bx-check-circle me-1"></i> Vendido
+                        </Button>
+                        <Button
+                          color="primary"
+                          outline
+                          onClick={handleMoveSelectedOpen}
+                          className="btn-sm"
+                          title="Mover para estágio"
+                        >
+                          <i className="bx bx-transfer me-1"></i> Mover
+                        </Button>
+                      </>
+                    )}
+                    <Button
+                      color="primary"
+                      onClick={() => navigate('/oportunidades/nova')}
+                      className="btn-sm"
+                    >
+                      <i className="bx bx-plus me-1"></i> Nova Oportunidade
+                    </Button>
+                  </div>
+                </Col>
+              </>
+            )}
+          </Row>
+          
+          {!isEditingStages && (
+            <Row className="g-3 mt-2">
+              <Col sm={4}>
+                <div className="d-flex align-items-center bg-light p-2 rounded-2">
+                  <div className="me-2 d-flex justify-content-center align-items-center rounded-circle bg-primary bg-opacity-10 text-primary" style={{ width: '32px', height: '32px' }}>
+                    <i className="bx bx-layer"></i>
+                  </div>
+                  <div>
+                    <div className="text-muted fs-12">Total de Oportunidades</div>
+                    <div className="fw-medium">{totalOpportunities}</div>
+                  </div>
+                </div>
+              </Col>
+              <Col sm={4}>
+                <div className="d-flex align-items-center bg-light p-2 rounded-2">
+                  <div className="me-2 d-flex justify-content-center align-items-center rounded-circle bg-success bg-opacity-10 text-success" style={{ width: '32px', height: '32px' }}>
+                    <i className="bx bx-money"></i>
+                  </div>
+                  <div>
+                    <div className="text-muted fs-12">Valor Total</div>
+                    <div className="fw-medium">{formatCurrency(totalAmount)}</div>
+                  </div>
+                </div>
+              </Col>
+              <Col sm={4}>
+                <div className="d-flex align-items-center bg-light p-2 rounded-2">
+                  <div className="me-2 d-flex justify-content-center align-items-center rounded-circle bg-info bg-opacity-10 text-info" style={{ width: '32px', height: '32px' }}>
+                    <i className="bx bx-refresh"></i>
+                  </div>
+                  <div>
+                    <div className="text-muted fs-12">Valor Recorrente</div>
+                    <div className="fw-medium">{formatCurrency(totalRecurrentAmount)}/mês</div>
+                  </div>
+                </div>
+              </Col>
+            </Row>
+          )}
+          
+          {feedback && (
+            <Alert color="info" className="mt-3 mb-0">
+              {feedback}
+            </Alert>
+          )}
+        </div>
       )}
       
       {/* Adiciona o container de toast */}
@@ -641,48 +935,16 @@ const Pipeline = props => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="colored"
       />
       
-      {/* Cabeçalho com título e botão de alternância de visualização */}
-      <div className="mb-3 d-flex justify-content-between align-items-center">
-        <h5 className="text-muted">
-          {t("Funil Vendas")} <small className="text-muted">
-            {totalOpportunities} {totalOpportunities === 1 ? 'oportunidade' : 'oportunidades'} | 
-            Total de P&S: {formatCurrency(totalAmount)} | 
-            Total de MRR: {formatCurrency(totalRecurrentAmount)}
-          </small>
-        </h5>
-        
-        {/* Botões de alternância de visualização */}
-        <ButtonGroup>
-          <Button 
-            color={viewMode === 'pipeline' ? 'success' : 'light'} 
-            onClick={() => setViewMode('pipeline')}
-            title="Visualização em Pipeline"
-          >
-            <i className="mdi mdi-view-sequential me-1"></i>
-            Pipeline
-          </Button>
-          <Button 
-            color={viewMode === 'list' ? 'success' : 'light'} 
-            onClick={() => setViewMode('list')}
-            title="Visualização em Lista"
-          >
-            <i className="mdi mdi-format-list-bulleted me-1"></i>
-            Lista
-          </Button>
-        </ButtonGroup>
-      </div>
-
       {/* Visualização em Pipeline */}
-      {viewMode === 'pipeline' && (
+      {effectiveViewMode === 'pipeline' && (
         <div 
           ref={scrollContainerRef}
           className="pipeline-scroll-container"
           style={{ 
             display: 'flex', 
-            gap: '8px',
+            gap: '4px',
             overflowX: 'scroll', 
             paddingBottom: '15px',
             cursor: 'grab',
@@ -692,85 +954,137 @@ const Pipeline = props => {
             userSelect: 'none',
             scrollbarWidth: 'none',  /* Firefox */
             msOverflowStyle: 'none',  /* IE and Edge */
-            height: 'calc(100vh - 170px)',
+            height: stageHeight || 'calc(100vh - 170px)',
           }}
         >
-          {pipelineStages.map((stage, index) => (
-            <div 
-              key={index} 
-              className="pipeline-stage"
-              style={{ 
-                flex: '0 0 260px',
-                width: '260px', 
-                height: '100%'
-              }}
-            >
-              <div className="border h-100 bg-white d-flex flex-column" style={{ 
-                borderRadius: '6px'
-              }}>
-                <div className="p-3 pb-2 border-bottom border-light pipeline-stage-header">
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <h6 className="mb-0 fs-6 text-secondary fw-medium">
-                      {stage.id === 6 ? (
-                        <span className="text-success">
-                          <i className="mdi mdi-checkbox-marked-circle-outline me-1"></i>
-                          {index}. {stage.title}
-                        </span>
-                      ) : (
-                        <>{index}. {stage.title}</>
-                      )}
-                    </h6>
-                    <span className={`badge ${stage.id === 6 ? 'bg-success' : 'bg-secondary'} rounded-pill`}>
-                      {stage.count}
-                    </span>
-                  </div>
-                  <div className="small text-muted">{stage.totalAmount}</div>
-                </div>
-                
-                {/* Área para os cards de oportunidades (zona de drop) */}
+          {isEditingStages ? (
+            // Exibir as etapas do funil em edição
+            funnelData && funnelData.stages.length > 0 ? (
+              funnelData.stages.map((stage, index) => (
                 <div 
-                  className="p-2 flex-grow-1 overflow-auto pipeline-dropzone"
-                  onDrop={(e) => handleDrop(e, stage.id)}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  data-stage-id={stage.id}
+                  key={index} 
+                  className="pipeline-stage"
+                  style={{ 
+                    flex: '0 0 300px',
+                    width: '300px', 
+                    height: '100%'
+                  }}
                 >
-                  {/* Dica de arrastar */}
-                  <div className="pipeline-dropzone-hint">
-                    <i className="mdi mdi-arrow-down-circle me-1"></i>
-                    Solte aqui para mover para {stage.title}
-                  </div>
-                  
-                  {/* Área transparente que cobre toda a zona de drop quando arrastando */}
-                  <div className="pipeline-dropzone-overlay" />
-                  
-                  {/* Cards de oportunidades */}
-                  {opportunitiesByStage[stage.id] && opportunitiesByStage[stage.id].length > 0 ? (
-                    <div className="d-flex flex-column">
-                      {opportunitiesByStage[stage.id].map(opportunity => (
-                        <PipeCard key={opportunity.id} opportunity={opportunity} />
-                      ))}
-                      
-                      {/* Espaço extra para permitir soltar no final da lista */}
-                      <div className="pipeline-dropzone-end-spacer" />
-                    </div>
-                  ) : (
-                    <div className="d-flex align-items-center justify-content-center h-100 text-center text-muted pipeline-empty-placeholder">
-                      <div>
-                        <i className="mdi mdi-tray-remove-outline d-block fs-1 mb-3"></i>
-                        <span className="fs-6">Etapa vazia</span>
+                  <div className="border h-100 bg-white d-flex flex-column" style={{ 
+                    borderRadius: '6px'
+                  }}>
+                    <div className="p-3 pb-2 border-bottom border-light pipeline-stage-header">
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <h6 className="mb-0 fs-6 text-secondary fw-medium">
+                          {index + 1}. {stage.title}
+                        </h6>
+                        <Button 
+                          color="link" 
+                          className="p-0 text-danger" 
+                          onClick={() => removeStageFromFunnel(stage.id)}
+                        >
+                          <i className="mdi mdi-trash-can-outline"></i>
+                        </Button>
                       </div>
                     </div>
-                  )}
+                    <div className="p-4 d-flex align-items-center justify-content-center h-100 text-center text-muted">
+                      <div>
+                        <i className="mdi mdi-chart-timeline-variant d-block fs-1 mb-3 text-primary"></i>
+                        <span className="fs-6">Etapa configurada</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              // Mensagem para adicionar etapas
+              <div className="d-flex align-items-center justify-content-center w-100 p-5">
+                <div className="text-center">
+                  <i className="mdi mdi-arrow-up-circle-outline d-block fs-1 mb-3 text-primary"></i>
+                  <h5 className="mb-2">Adicione etapas ao seu funil</h5>
+                  <p className="text-muted">Utilize o campo acima para adicionar etapas ao seu funil de vendas personalizado.</p>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          ) : (
+            // Exibir os estágios normais do pipeline
+            pipelineStages.map((stage, index) => (
+              <div 
+                key={index} 
+                className="pipeline-stage"
+                style={{ 
+                  flex: '0 0 300px',
+                  width: '300px', 
+                  height: '100%'
+                }}
+              >
+                <div className="border h-100 bg-white d-flex flex-column" style={{ 
+                  borderRadius: '6px'
+                }}>
+                  <div className="p-3 pb-2 border-bottom border-light pipeline-stage-header">
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <h6 className="mb-0 fs-6 text-secondary fw-medium">
+                        {stage.id === 6 ? (
+                          <span className="text-success">
+                            <i className="mdi mdi-checkbox-marked-circle-outline me-1"></i>
+                            {index + 1}. {stage.title}
+                          </span>
+                        ) : (
+                          <>{index + 1}. {stage.title}</>
+                        )}
+                      </h6>
+                      <span className={`badge ${stage.id === 6 ? 'bg-success' : 'bg-secondary'} rounded-pill`}>
+                        {stage.count}
+                      </span>
+                    </div>
+                    <div className="small text-muted">{stage.totalAmount}</div>
+                  </div>
+                  
+                  {/* Área para os cards de oportunidades (zona de drop) */}
+                  <div 
+                    className="p-2 flex-grow-1 overflow-auto pipeline-dropzone"
+                    onDrop={(e) => handleDrop(e, stage.id)}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    data-stage-id={stage.id}
+                  >
+                    {/* Dica de arrastar */}
+                    <div className="pipeline-dropzone-hint">
+                      <i className="mdi mdi-arrow-down-circle me-1"></i>
+                      Solte aqui para mover para {stage.title}
+                    </div>
+                    
+                    {/* Área transparente que cobre toda a zona de drop quando arrastando */}
+                    <div className="pipeline-dropzone-overlay" />
+                    
+                    {/* Cards de oportunidades */}
+                    {opportunitiesByStage[stage.id] && opportunitiesByStage[stage.id].length > 0 ? (
+                      <div className="d-flex flex-column">
+                        {opportunitiesByStage[stage.id].map(opportunity => (
+                          <PipeCard key={opportunity.id} opportunity={opportunity} />
+                        ))}
+                        
+                        {/* Espaço extra para permitir soltar no final da lista */}
+                        <div className="pipeline-dropzone-end-spacer" />
+                      </div>
+                    ) : (
+                      <div className="d-flex align-items-center justify-content-center h-100 text-center text-muted pipeline-empty-placeholder">
+                        <div>
+                          <i className="mdi mdi-tray-remove-outline d-block fs-1 mb-3"></i>
+                          <span className="fs-6">Etapa vazia</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       )}
 
       {/* Visualização em Lista - semelhante à imagem fornecida */}
-      {viewMode === 'list' && (
+      {effectiveViewMode === 'list' && (
         <div className="table-responsive">
           <table className="table table-hover">
             <thead className="bg-light">
@@ -918,12 +1232,19 @@ const Pipeline = props => {
           <Button color="danger" onClick={handleDeleteConfirm} size="lg">Excluir</Button>
         </ModalFooter>
       </Modal>
-    </React.Fragment>
+    </div>
   );
 };
 
 Pipeline.propTypes = {
   t: PropTypes.func.isRequired,
+  funnelId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  isEditing: PropTypes.bool,
+  funnelName: PropTypes.string,
+  viewMode: PropTypes.string,
+  setViewMode: PropTypes.func,
+  hideControls: PropTypes.bool,
+  stageHeight: PropTypes.string
 };
 
 export default withTranslation()(Pipeline);

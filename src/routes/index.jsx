@@ -19,6 +19,9 @@ import Activities from "../pages/Activities/index";
 // // Clients
 import Clients from "../pages/Clients/index";
 import ClientForm from "../pages/Clients/ClientForm";
+// // Employees
+import Employees from "../pages/Employees/index";
+import EmployeeForm from "../pages/Employees/EmployeeForm";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
@@ -28,6 +31,11 @@ const authProtectedRoutes = [
   { path: "/atividades", component: <Activities /> },
   { path: "/clientes", component: <Clients /> },
   { path: "/clientes/add/:type", component: <ClientForm /> },
+  // Rotas de Colaboradores
+  { path: "/employees", component: <Employees /> },
+  { path: "/colaboradores/add", component: <EmployeeForm /> },
+  { path: "/colaboradores/edit/:id", component: <EmployeeForm /> },
+  { path: "/colaborador/:id", component: <CustomerDetail /> }, // Reaproveitando o componente CustomerDetail
 
   //   // this route should be at the end of all other routes
   //   // eslint-disable-next-line react/display-name

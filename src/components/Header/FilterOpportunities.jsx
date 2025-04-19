@@ -7,46 +7,25 @@ import {
   Input,
   Row,
   Col,
-  Badge,
   Card,
   CardBody,
   CardHeader,
   CardFooter,
-  Container
+  Container,
+  InputGroup
 } from "reactstrap";
 
 const FilterOpportunities = ({ isOpen, toggle }) => {
-  // Estado para armazenar os valores dos filtros
+  // Estado para armazenar os valores dos filtros (simplificado)
   const [filterData, setFilterData] = useState({
     title: "",
     status: "Aberto",
-    situation: "",
-    origin: "",
-    company: "",
-    person: "",
-    segment: "",
-    tags: "",
-    state: "",
-    city: "",
-    product: "",
-    lossReasons: "",
-    valuePnS: { min: "", max: "" },
-    valueMRR: { min: "", max: "" },
-    registrationDate: { min: "", max: "" },
-    closingDate: { min: "", max: "" },
-    expectedClosingDate: { min: "", max: "" },
-    proposalRegistrationDate: { min: "", max: "" },
-    proposalClosingDate: { min: "", max: "" },
-    lastContactDate: { min: "", max: "" },
     funnelStage: "",
-    region: "",
-    microregion: "",
-    activities: "",
-    temperature: "",
+    company: "",
+    responsible: "",
+    expectedClosingDate: { min: "", max: "" },
+    amount: { min: "", max: "" },
     probability: "",
-    sector: "",
-    showStagedOnly: false,
-    showUnreadEmailsOnly: false
   });
 
   // Função para atualizar o estado do formulário
@@ -90,33 +69,12 @@ const FilterOpportunities = ({ isOpen, toggle }) => {
     setFilterData({
       title: "",
       status: "Aberto",
-      situation: "",
-      origin: "",
-      company: "",
-      person: "",
-      segment: "",
-      tags: "",
-      state: "",
-      city: "",
-      product: "",
-      lossReasons: "",
-      valuePnS: { min: "", max: "" },
-      valueMRR: { min: "", max: "" },
-      registrationDate: { min: "", max: "" },
-      closingDate: { min: "", max: "" },
-      expectedClosingDate: { min: "", max: "" },
-      proposalRegistrationDate: { min: "", max: "" },
-      proposalClosingDate: { min: "", max: "" },
-      lastContactDate: { min: "", max: "" },
       funnelStage: "",
-      region: "",
-      microregion: "",
-      activities: "",
-      temperature: "",
+      company: "",
+      responsible: "",
+      expectedClosingDate: { min: "", max: "" },
+      amount: { min: "", max: "" },
       probability: "",
-      sector: "",
-      showStagedOnly: false,
-      showUnreadEmailsOnly: false
     });
   };
 
@@ -126,376 +84,64 @@ const FilterOpportunities = ({ isOpen, toggle }) => {
     <div className="filter-screen">
       <div className="page-content">
         <Container fluid>
-          <Card>
+          <Card className="shadow-sm">
             <CardHeader className="bg-light">
               <div className="d-flex justify-content-between align-items-center">
                 <div>
-                  <h4 className="mb-0">Filtrar oportunidades</h4>
-                  <div className="small text-muted">Defina os critérios para filtrar as oportunidades no funil</div>
+                  <h5 className="mb-0 text-primary">Filtrar oportunidades</h5>
+                  <div className="small text-muted">Filtre oportunidades por critérios essenciais</div>
                 </div>
                 <button type="button" className="btn-close" onClick={toggle} aria-label="Fechar"></button>
               </div>
             </CardHeader>
-            <CardBody>
-              <Row>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Título</Label>
-                    <Input
-                      type="text"
-                      name="title"
-                      value={filterData.title}
-                      onChange={handleInputChange}
-                      placeholder="Título da oportunidade"
-                      className="form-control"
-                    />
-                  </FormGroup>
-                </Col>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Status</Label>
-                    <div>
-                      <Badge color="light" className="px-3 py-2 me-2 mb-2">
-                        <i className="mdi mdi-check-circle me-1 text-success"></i> Aberto
-                      </Badge>
-                      {/* Outros status poderiam ser adicionados aqui */}
-                    </div>
-                  </FormGroup>
-                </Col>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Situação</Label>
-                    <Input
-                      type="select"
-                      name="situation"
-                      value={filterData.situation}
-                      onChange={handleInputChange}
-                      className="form-select"
-                    >
-                      <option value="">Selecione a situação do negócio</option>
-                      <option value="Novo">Novo</option>
-                      <option value="Em andamento">Em andamento</option>
-                      <option value="Estagnado">Estagnado</option>
-                      <option value="Vencido">Vencido</option>
-                    </Input>
-                  </FormGroup>
-                </Col>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Origem</Label>
-                    <Input
-                      type="select"
-                      name="origin"
-                      value={filterData.origin}
-                      onChange={handleInputChange}
-                      className="form-select"
-                    >
-                      <option value="">Selecione uma origem</option>
-                      <option value="Indicação">Indicação</option>
-                      <option value="Website">Website</option>
-                      <option value="Redes Sociais">Redes Sociais</option>
-                      <option value="Evento">Evento</option>
-                    </Input>
-                  </FormGroup>
-                </Col>
-              </Row>
+            <CardBody className="pb-2">
+              {/* Busca rápida */}
+              <div className="mb-4">
+                <InputGroup className="search-box">
+                  <Input
+                    type="text"
+                    name="title"
+                    value={filterData.title}
+                    onChange={handleInputChange}
+                    placeholder="Busque por título, empresa ou responsável"
+                    className="form-control"
+                  />
+                  <div className="input-group-text bg-primary text-white">
+                    <i className="mdi mdi-magnify"></i>
+                  </div>
+                </InputGroup>
+              </div>
 
-              <Row>
-                <Col md={3}>
+              <Row className="g-3">
+                {/* Status */}
+                <Col md={6} xl={3}>
                   <FormGroup>
-                    <Label className="form-label">Empresa</Label>
-                    <Input
-                      type="select"
-                      name="company"
-                      value={filterData.company}
-                      onChange={handleInputChange}
-                      className="form-select"
-                    >
-                      <option value="">Selecione uma empresa</option>
-                    </Input>
+                    <Label className="form-label fw-medium">Status</Label>
+                    <div className="d-flex gap-2">
+                      <Button 
+                        color={filterData.status === "Aberto" ? "success" : "light"} 
+                        size="sm" 
+                        className="w-50"
+                        onClick={() => setFilterData({...filterData, status: "Aberto"})}
+                      >
+                        <i className="mdi mdi-check-circle me-1"></i> Aberto
+                      </Button>
+                      <Button 
+                        color={filterData.status === "Fechado" ? "danger" : "light"} 
+                        size="sm" 
+                        className="w-50"
+                        onClick={() => setFilterData({...filterData, status: "Fechado"})}
+                      >
+                        <i className="mdi mdi-close-circle me-1"></i> Fechado
+                      </Button>
+                    </div>
                   </FormGroup>
                 </Col>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Pessoa</Label>
-                    <Input
-                      type="select"
-                      name="person"
-                      value={filterData.person}
-                      onChange={handleInputChange}
-                      className="form-select"
-                    >
-                      <option value="">Selecione uma pessoa</option>
-                    </Input>
-                  </FormGroup>
-                </Col>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Segmento</Label>
-                    <Input
-                      type="select"
-                      name="segment"
-                      value={filterData.segment}
-                      onChange={handleInputChange}
-                      className="form-select"
-                    >
-                      <option value="">Selecione um segmento</option>
-                    </Input>
-                  </FormGroup>
-                </Col>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Tags</Label>
-                    <Input
-                      type="select"
-                      name="tags"
-                      value={filterData.tags}
-                      onChange={handleInputChange}
-                      className="form-select"
-                    >
-                      <option value="">Selecione uma tag</option>
-                    </Input>
-                  </FormGroup>
-                </Col>
-              </Row>
 
-              <Row>
-                <Col md={3}>
+                {/* Etapa do funil */}
+                <Col md={6} xl={3}>
                   <FormGroup>
-                    <Label className="form-label">Estado</Label>
-                    <Input
-                      type="select"
-                      name="state"
-                      value={filterData.state}
-                      onChange={handleInputChange}
-                      className="form-select"
-                    >
-                      <option value="">Selecione um estado</option>
-                      <option value="SP">São Paulo</option>
-                      <option value="RJ">Rio de Janeiro</option>
-                      <option value="MG">Minas Gerais</option>
-                      {/* Outros estados poderiam ser adicionados aqui */}
-                    </Input>
-                  </FormGroup>
-                </Col>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Cidade</Label>
-                    <Input
-                      type="select"
-                      name="city"
-                      value={filterData.city}
-                      onChange={handleInputChange}
-                      className="form-select"
-                    >
-                      <option value="">Selecione uma cidade</option>
-                    </Input>
-                  </FormGroup>
-                </Col>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Produto</Label>
-                    <Input
-                      type="select"
-                      name="product"
-                      value={filterData.product}
-                      onChange={handleInputChange}
-                      className="form-select"
-                    >
-                      <option value="">Selecione um produto</option>
-                    </Input>
-                  </FormGroup>
-                </Col>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Motivos de perda</Label>
-                    <Input
-                      type="select"
-                      name="lossReasons"
-                      value={filterData.lossReasons}
-                      onChange={handleInputChange}
-                      className="form-select"
-                    >
-                      <option value="">Selecione um motivo de perda</option>
-                    </Input>
-                  </FormGroup>
-                </Col>
-              </Row>
-
-              <Row>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Valor (P&S)</Label>
-                    <div className="d-flex">
-                      <Input
-                        type="number"
-                        value={filterData.valuePnS.min}
-                        onChange={(e) => handleRangeChange(e, "valuePnS", "min")}
-                        placeholder="0"
-                        className="form-control"
-                      />
-                      <div className="mx-2 d-flex align-items-center">até</div>
-                      <Input
-                        type="number"
-                        value={filterData.valuePnS.max}
-                        onChange={(e) => handleRangeChange(e, "valuePnS", "max")}
-                        placeholder="0"
-                        className="form-control"
-                      />
-                    </div>
-                  </FormGroup>
-                </Col>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Valor (MRR)</Label>
-                    <div className="d-flex">
-                      <Input
-                        type="number"
-                        value={filterData.valueMRR.min}
-                        onChange={(e) => handleRangeChange(e, "valueMRR", "min")}
-                        placeholder="0"
-                        className="form-control"
-                      />
-                      <div className="mx-2 d-flex align-items-center">até</div>
-                      <Input
-                        type="number"
-                        value={filterData.valueMRR.max}
-                        onChange={(e) => handleRangeChange(e, "valueMRR", "max")}
-                        placeholder="0"
-                        className="form-control"
-                      />
-                    </div>
-                  </FormGroup>
-                </Col>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Data de cadastro (oportunidade)</Label>
-                    <div className="d-flex">
-                      <Input
-                        type="date"
-                        value={filterData.registrationDate.min}
-                        onChange={(e) => handleRangeChange(e, "registrationDate", "min")}
-                        className="form-control"
-                      />
-                      <div className="mx-2 d-flex align-items-center">até</div>
-                      <Input
-                        type="date"
-                        value={filterData.registrationDate.max}
-                        onChange={(e) => handleRangeChange(e, "registrationDate", "max")}
-                        className="form-control"
-                      />
-                    </div>
-                  </FormGroup>
-                </Col>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Data de fechamento (oportunidade)</Label>
-                    <div className="d-flex">
-                      <Input
-                        type="date"
-                        value={filterData.closingDate.min}
-                        onChange={(e) => handleRangeChange(e, "closingDate", "min")}
-                        className="form-control"
-                      />
-                      <div className="mx-2 d-flex align-items-center">até</div>
-                      <Input
-                        type="date"
-                        value={filterData.closingDate.max}
-                        onChange={(e) => handleRangeChange(e, "closingDate", "max")}
-                        className="form-control"
-                      />
-                    </div>
-                  </FormGroup>
-                </Col>
-              </Row>
-
-              <Row>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Data de previsão de fechamento (oportunidade)</Label>
-                    <div className="d-flex">
-                      <Input
-                        type="date"
-                        value={filterData.expectedClosingDate.min}
-                        onChange={(e) => handleRangeChange(e, "expectedClosingDate", "min")}
-                        className="form-control"
-                      />
-                      <div className="mx-2 d-flex align-items-center">até</div>
-                      <Input
-                        type="date"
-                        value={filterData.expectedClosingDate.max}
-                        onChange={(e) => handleRangeChange(e, "expectedClosingDate", "max")}
-                        className="form-control"
-                      />
-                    </div>
-                  </FormGroup>
-                </Col>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Data de cadastro (proposta)</Label>
-                    <div className="d-flex">
-                      <Input
-                        type="date"
-                        value={filterData.proposalRegistrationDate.min}
-                        onChange={(e) => handleRangeChange(e, "proposalRegistrationDate", "min")}
-                        className="form-control"
-                      />
-                      <div className="mx-2 d-flex align-items-center">até</div>
-                      <Input
-                        type="date"
-                        value={filterData.proposalRegistrationDate.max}
-                        onChange={(e) => handleRangeChange(e, "proposalRegistrationDate", "max")}
-                        className="form-control"
-                      />
-                    </div>
-                  </FormGroup>
-                </Col>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Data de fechamento (proposta)</Label>
-                    <div className="d-flex">
-                      <Input
-                        type="date"
-                        value={filterData.proposalClosingDate.min}
-                        onChange={(e) => handleRangeChange(e, "proposalClosingDate", "min")}
-                        className="form-control"
-                      />
-                      <div className="mx-2 d-flex align-items-center">até</div>
-                      <Input
-                        type="date"
-                        value={filterData.proposalClosingDate.max}
-                        onChange={(e) => handleRangeChange(e, "proposalClosingDate", "max")}
-                        className="form-control"
-                      />
-                    </div>
-                  </FormGroup>
-                </Col>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Data do último contato (oportunidade)</Label>
-                    <div className="d-flex">
-                      <Input
-                        type="date"
-                        value={filterData.lastContactDate.min}
-                        onChange={(e) => handleRangeChange(e, "lastContactDate", "min")}
-                        className="form-control"
-                      />
-                      <div className="mx-2 d-flex align-items-center">até</div>
-                      <Input
-                        type="date"
-                        value={filterData.lastContactDate.max}
-                        onChange={(e) => handleRangeChange(e, "lastContactDate", "max")}
-                        className="form-control"
-                      />
-                    </div>
-                  </FormGroup>
-                </Col>
-              </Row>
-
-              <Row>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Etapa do funil</Label>
+                    <Label className="form-label fw-medium">Etapa do funil</Label>
                     <Input
                       type="select"
                       name="funnelStage"
@@ -503,7 +149,7 @@ const FilterOpportunities = ({ isOpen, toggle }) => {
                       onChange={handleInputChange}
                       className="form-select"
                     >
-                      <option value="">Selecione uma etapa</option>
+                      <option value="">Todas as etapas</option>
                       <option value="Cadastro">Cadastro</option>
                       <option value="Contato">Contato</option>
                       <option value="Reunião">Reunião</option>
@@ -513,71 +159,49 @@ const FilterOpportunities = ({ isOpen, toggle }) => {
                     </Input>
                   </FormGroup>
                 </Col>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Região</Label>
-                    <Input
-                      type="select"
-                      name="region"
-                      value={filterData.region}
-                      onChange={handleInputChange}
-                      className="form-select"
-                    >
-                      <option value="">Selecione uma região</option>
-                    </Input>
-                  </FormGroup>
-                </Col>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Microrregião</Label>
-                    <Input
-                      type="select"
-                      name="microregion"
-                      value={filterData.microregion}
-                      onChange={handleInputChange}
-                      className="form-select"
-                    >
-                      <option value="">Selecione uma microrregião</option>
-                    </Input>
-                  </FormGroup>
-                </Col>
-                <Col md={3}>
-                  <FormGroup>
-                    <Label className="form-label">Atividades</Label>
-                    <Input
-                      type="select"
-                      name="activities"
-                      value={filterData.activities}
-                      onChange={handleInputChange}
-                      className="form-select"
-                    >
-                      <option value="">Selecione a relação com atividade</option>
-                    </Input>
-                  </FormGroup>
-                </Col>
-              </Row>
 
-              <Row>
-                <Col md={4}>
+                {/* Empresa */}
+                <Col md={6} xl={3}>
                   <FormGroup>
-                    <Label className="form-label">Temperatura</Label>
+                    <Label className="form-label fw-medium">Empresa</Label>
                     <Input
                       type="select"
-                      name="temperature"
-                      value={filterData.temperature}
+                      name="company"
+                      value={filterData.company}
                       onChange={handleInputChange}
                       className="form-select"
                     >
-                      <option value="">Selecione a temperatura</option>
-                      <option value="Frio">Frio</option>
-                      <option value="Morno">Morno</option>
-                      <option value="Quente">Quente</option>
+                      <option value="">Todas as empresas</option>
+                      <option value="ABC">ABC Ltda.</option>
+                      <option value="XYZ">XYZ Comércio</option>
+                      <option value="123">123 Serviços</option>
                     </Input>
                   </FormGroup>
                 </Col>
-                <Col md={4}>
+
+                {/* Responsável */}
+                <Col md={6} xl={3}>
                   <FormGroup>
-                    <Label className="form-label">Probabilidade</Label>
+                    <Label className="form-label fw-medium">Responsável</Label>
+                    <Input
+                      type="select"
+                      name="responsible"
+                      value={filterData.responsible}
+                      onChange={handleInputChange}
+                      className="form-select"
+                    >
+                      <option value="">Todos os responsáveis</option>
+                      <option value="Felipe">Felipe Macedo</option>
+                      <option value="Ana">Ana Silva</option>
+                      <option value="Carlos">Carlos Santos</option>
+                    </Input>
+                  </FormGroup>
+                </Col>
+
+                {/* Probabilidade */}
+                <Col md={6} xl={3}>
+                  <FormGroup>
+                    <Label className="form-label fw-medium">Probabilidade</Label>
                     <Input
                       type="select"
                       name="probability"
@@ -585,66 +209,65 @@ const FilterOpportunities = ({ isOpen, toggle }) => {
                       onChange={handleInputChange}
                       className="form-select"
                     >
-                      <option value="">Selecione a probabilidade</option>
-                      <option value="Baixa">Baixa</option>
-                      <option value="Média">Média</option>
-                      <option value="Alta">Alta</option>
+                      <option value="">Qualquer probabilidade</option>
+                      <option value="alta">Alta (&gt; 70%)</option>
+                      <option value="media">Média (30% - 70%)</option>
+                      <option value="baixa">Baixa (&lt; 30%)</option>
                     </Input>
                   </FormGroup>
                 </Col>
-                <Col md={4}>
-                  <FormGroup>
-                    <Label className="form-label">Setor</Label>
-                    <Input
-                      type="select"
-                      name="sector"
-                      value={filterData.sector}
-                      onChange={handleInputChange}
-                      className="form-select"
-                    >
-                      <option value="">Selecione um setor</option>
-                    </Input>
-                  </FormGroup>
-                </Col>
-              </Row>
 
-              <Row className="mt-2">
-                <Col md={6}>
-                  <FormGroup check className="mb-3">
-                    <Input
-                      type="checkbox"
-                      name="showStagedOnly"
-                      id="showStagedOnly"
-                      checked={filterData.showStagedOnly}
-                      onChange={handleInputChange}
-                    />
-                    <Label check for="showStagedOnly" className="form-check-label">
-                      Exibir somente oportunidades estagnadas
-                    </Label>
+                {/* Valor */}
+                <Col md={6} xl={3}>
+                  <FormGroup>
+                    <Label className="form-label fw-medium">Valor (R$)</Label>
+                    <div className="d-flex">
+                      <Input
+                        type="number"
+                        placeholder="Mínimo"
+                        value={filterData.amount.min}
+                        onChange={(e) => handleRangeChange(e, "amount", "min")}
+                        className="form-control me-2"
+                      />
+                      <Input
+                        type="number"
+                        placeholder="Máximo"
+                        value={filterData.amount.max}
+                        onChange={(e) => handleRangeChange(e, "amount", "max")}
+                        className="form-control"
+                      />
+                    </div>
                   </FormGroup>
                 </Col>
-                <Col md={6}>
-                  <FormGroup check className="mb-3">
-                    <Input
-                      type="checkbox"
-                      name="showUnreadEmailsOnly"
-                      id="showUnreadEmailsOnly"
-                      checked={filterData.showUnreadEmailsOnly}
-                      onChange={handleInputChange}
-                    />
-                    <Label check for="showUnreadEmailsOnly" className="form-check-label">
-                      Exibir somente oportunidades com e-mails não lidos
-                    </Label>
+
+                {/* Data de previsão de fechamento */}
+                <Col md={6} xl={3}>
+                  <FormGroup>
+                    <Label className="form-label fw-medium">Previsão de fechamento</Label>
+                    <div className="d-flex">
+                      <Input
+                        type="date"
+                        value={filterData.expectedClosingDate.min}
+                        onChange={(e) => handleRangeChange(e, "expectedClosingDate", "min")}
+                        className="form-control me-2"
+                      />
+                      <Input
+                        type="date"
+                        value={filterData.expectedClosingDate.max}
+                        onChange={(e) => handleRangeChange(e, "expectedClosingDate", "max")}
+                        className="form-control"
+                      />
+                    </div>
                   </FormGroup>
                 </Col>
               </Row>
             </CardBody>
-            <CardFooter className="bg-light d-flex justify-content-end">
-              <Button color="light" className="me-2" onClick={handleClearFilters}>
-                Limpar filtros
+            <CardFooter className="bg-light d-flex justify-content-between">
+              <Button color="link" className="text-danger p-0" onClick={handleClearFilters}>
+                <i className="mdi mdi-refresh me-1"></i> Limpar filtros
               </Button>
               <Button color="primary" onClick={handleApplyFilter}>
-                Aplicar filtros
+                <i className="mdi mdi-filter-outline me-1"></i> Aplicar filtros
               </Button>
             </CardFooter>
           </Card>

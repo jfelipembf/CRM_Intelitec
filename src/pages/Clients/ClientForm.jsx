@@ -5,24 +5,20 @@ import {
   Col, 
   Card, 
   CardBody, 
+  CardHeader,
+  CardFooter,
   Form, 
   FormGroup, 
   Label, 
   Input, 
   Button, 
   Alert,
-  Nav,
-  NavItem,
-  NavLink,
-  TabContent,
-  TabPane
+  InputGroup
 } from "reactstrap";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import PropTypes from "prop-types";
-import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { toast } from "react-toastify";
-import classnames from "classnames";
 
 const ClientForm = (props) => {
   const { t } = props;
@@ -59,9 +55,6 @@ const ClientForm = (props) => {
     segment: "",
     notes: ""
   });
-  
-  // Estado para abas
-  const [activeTab, setActiveTab] = useState("1");
   
   // Estado para alerta de erro
   const [error, setError] = useState("");
@@ -115,35 +108,40 @@ const ClientForm = (props) => {
     toast.success(`${clientType === "pessoa" ? "Pessoa" : "Empresa"} cadastrada com sucesso!`, {
       position: "top-right",
       autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
     });
     
     // Redirecionar de volta para a lista
     navigate("/clientes");
   };
   
-  // Alternar entre abas
-  const toggle = (tab) => {
-    if (activeTab !== tab) setActiveTab(tab);
-  };
-  
   return (
     <React.Fragment>
       <div className="page-content">
         <Container fluid>
-          
           <Row>
             <Col lg={12}>
-              <Card>
-                <CardBody>
-                  <h4 className="card-title mb-4">
-                    {clientType === "pessoa" ? "Cadastro de Pessoa" : clientType === "empresa" ? "Cadastro de Empresa" : "Cadastro de Cliente"}
-                  </h4>
-                  
+              <Card className="shadow-sm">
+                <CardHeader className="bg-light">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 className="mb-0 text-primary">
+                        {clientType === "pessoa" ? "Cadastro de Pessoa" : "Cadastro de Empresa"}
+                      </h5>
+                      <div className="small text-muted">
+                        Preencha os dados {clientType === "pessoa" ? "da pessoa" : "da empresa"}
+                      </div>
+                    </div>
+                    <Button 
+                      color="link" 
+                      className="text-muted p-0" 
+                      onClick={() => navigate("/clientes")}
+                    >
+                      <i className="mdi mdi-close"></i>
+                    </Button>
+                  </div>
+                </CardHeader>
+                
+                <CardBody className="pb-2">
                   {error && (
                     <Alert color="danger" className="mb-4">
                       {error}
@@ -151,515 +149,457 @@ const ClientForm = (props) => {
                   )}
                   
                   <Form onSubmit={handleSubmit}>
-                    <Nav tabs className="nav-tabs-custom">
-                      <NavItem>
-                        <NavLink
-                          className={classnames({ active: activeTab === "1" })}
-                          onClick={() => toggle("1")}
-                        >
-                          <i className="bx bx-user-circle font-size-16 me-2 align-middle"></i>
-                          Informações Básicas
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink
-                          className={classnames({ active: activeTab === "2" })}
-                          onClick={() => toggle("2")}
-                        >
-                          <i className="bx bx-map-pin font-size-16 me-2 align-middle"></i>
-                          Endereço
-                        </NavLink>
-                      </NavItem>
-                      {clientType === "empresa" && (
-                        <NavItem>
-                          <NavLink
-                            className={classnames({ active: activeTab === "3" })}
-                            onClick={() => toggle("3")}
-                          >
-                            <i className="bx bx-group font-size-16 me-2 align-middle"></i>
-                            Contatos
-                          </NavLink>
-                        </NavItem>
-                      )}
-                      <NavItem>
-                        <NavLink
-                          className={classnames({ active: activeTab === "4" })}
-                          onClick={() => toggle("4")}
-                        >
-                          <i className="bx bx-note font-size-16 me-2 align-middle"></i>
-                          Anotações
-                        </NavLink>
-                      </NavItem>
-                    </Nav>
-                    
-                    <TabContent activeTab={activeTab} className="mt-4">
-                      {/* Aba de Informações Básicas */}
-                      <TabPane tabId="1">
-                        <Row>
-                          <Col md={6}>
-                            <FormGroup>
-                              <Label for="name">Nome {clientType === "empresa" ? "da Empresa" : ""} *</Label>
-                              <Input
-                                type="text"
-                                name="name"
-                                id="name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                placeholder={`Informe o nome ${clientType === "empresa" ? "da empresa" : "completo"}`}
-                                required
-                              />
-                            </FormGroup>
-                          </Col>
-                          <Col md={6}>
-                            <FormGroup>
-                              <Label for="email">Email</Label>
-                              <Input
-                                type="email"
-                                name="email"
-                                id="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                placeholder="Informe o email"
-                              />
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        
-                        <Row>
-                          <Col md={6}>
-                            <FormGroup>
-                              <Label for="phone">Telefone</Label>
-                              <Input
-                                type="text"
-                                name="phone"
-                                id="phone"
-                                value={formData.phone}
-                                onChange={handleChange}
-                                placeholder="Informe o telefone"
-                              />
-                            </FormGroup>
-                          </Col>
-                          <Col md={6}>
-                            <FormGroup>
-                              <Label for="status">Status</Label>
-                              <Input
-                                id="title"
-                                type="select"
-                                name="status"
-                                value={formData.status}
-                                onChange={handleChange}
-                              >
-                                <option value="Ativo">Ativo</option>
-                                <option value="Inativo">Inativo</option>
-                                <option value="Em negociação">Em negociação</option>
-                              </Input>
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        
-                        {clientType === "pessoa" && (
-                          <Row>
-                            <Col md={6}>
-                              <FormGroup>
-                                <Label for="role">Cargo</Label>
-                                <Input
-                                  type="text"
-                                  name="role"
-                                  id="role"
-                                  value={formData.role}
-                                  onChange={handleChange}
-                                  placeholder="Informe o cargo"
-                                />
-                              </FormGroup>
-                            </Col>
-                            <Col md={6}>
-                              <FormGroup>
-                                <Label for="company">Empresa</Label>
-                                <Input
-                                  type="text"
-                                  name="company"
-                                  id="company"
-                                  value={formData.company}
-                                  onChange={handleChange}
-                                  placeholder="Informe a empresa"
-                                />
-                              </FormGroup>
-                            </Col>
-                          </Row>
-                        )}
-                        
-                        {clientType === "pessoa" && (
-                          <Row>
-                            <Col md={6}>
-                              <FormGroup>
-                                <Label for="source">Origem</Label>
-                                <Input
-                                  type="select"
-                                  name="source"
-                                  id="source"
-                                  value={formData.source}
-                                  onChange={handleChange}
-                                >
-                                  <option value="">Selecione a origem</option>
-                                  <option value="Site">Site</option>
-                                  <option value="Indicação">Indicação</option>
-                                  <option value="LinkedIn">LinkedIn</option>
-                                  <option value="Evento">Evento</option>
-                                  <option value="Feira">Feira</option>
-                                  <option value="Anúncio">Anúncio</option>
-                                </Input>
-                              </FormGroup>
-                            </Col>
-                            <Col md={6}>
-                              <FormGroup>
-                                <Label for="segment">Segmento</Label>
-                                <Input
-                                  type="select"
-                                  name="segment"
-                                  id="segment"
-                                  value={formData.segment}
-                                  onChange={handleChange}
-                                >
-                                  <option value="">Selecione o segmento</option>
-                                  <option value="Tecnologia">Tecnologia</option>
-                                  <option value="Educação">Educação</option>
-                                  <option value="Saúde">Saúde</option>
-                                  <option value="Financeiro">Financeiro</option>
-                                  <option value="Indústria">Indústria</option>
-                                  <option value="Varejo">Varejo</option>
-                                  <option value="Serviços">Serviços</option>
-                                  <option value="Consultoria">Consultoria</option>
-                                  <option value="Construção">Construção</option>
-                                  <option value="Logística">Logística</option>
-                                </Input>
-                              </FormGroup>
-                            </Col>
-                          </Row>
-                        )}
-                        
-                        {clientType === "empresa" && (
-                          <Row>
-                            <Col md={6}>
-                              <FormGroup>
-                                <Label for="cnpj">CNPJ</Label>
-                                <Input
-                                  type="text"
-                                  name="cnpj"
-                                  id="cnpj"
-                                  value={formData.cnpj}
-                                  onChange={handleChange}
-                                  placeholder="Informe o CNPJ"
-                                />
-                              </FormGroup>
-                            </Col>
-                            <Col md={6}>
-                              <FormGroup>
-                                <Label for="website">Website</Label>
-                                <Input
-                                  type="text"
-                                  name="website"
-                                  id="website"
-                                  value={formData.website}
-                                  onChange={handleChange}
-                                  placeholder="Informe o website"
-                                />
-                              </FormGroup>
-                            </Col>
-                          </Row>
-                        )}
-                        
-                        {clientType === "empresa" && (
-                          <Row>
-                            <Col md={6}>
-                              <FormGroup>
-                                <Label for="employees">Número de Funcionários</Label>
-                                <Input
-                                  type="number"
-                                  name="employees"
-                                  id="employees"
-                                  value={formData.employees}
-                                  onChange={handleChange}
-                                  placeholder="Informe o número de funcionários"
-                                />
-                              </FormGroup>
-                            </Col>
-                            <Col md={6}>
-                              <FormGroup>
-                                <Label for="revenue">Faturamento Anual (R$)</Label>
-                                <Input
-                                  type="text"
-                                  name="revenue"
-                                  id="revenue"
-                                  value={formData.revenue}
-                                  onChange={handleChange}
-                                  placeholder="Informe o faturamento anual"
-                                />
-                              </FormGroup>
-                            </Col>
-                          </Row>
-                        )}
-                        
-                        {clientType === "empresa" && (
-                          <Row>
-                            <Col md={6}>
-                              <FormGroup>
-                                <Label for="segment">Segmento</Label>
-                                <Input
-                                  type="select"
-                                  name="segment"
-                                  id="segment"
-                                  value={formData.segment}
-                                  onChange={handleChange}
-                                >
-                                  <option value="">Selecione o segmento</option>
-                                  <option value="Tecnologia">Tecnologia</option>
-                                  <option value="Educação">Educação</option>
-                                  <option value="Saúde">Saúde</option>
-                                  <option value="Financeiro">Financeiro</option>
-                                  <option value="Indústria">Indústria</option>
-                                  <option value="Varejo">Varejo</option>
-                                  <option value="Serviços">Serviços</option>
-                                  <option value="Consultoria">Consultoria</option>
-                                  <option value="Construção">Construção</option>
-                                  <option value="Logística">Logística</option>
-                                </Input>
-                              </FormGroup>
-                            </Col>
-                            <Col md={6}>
-                              <FormGroup>
-                                <Label for="source">Origem</Label>
-                                <Input
-                                  type="select"
-                                  name="source"
-                                  id="source"
-                                  value={formData.source}
-                                  onChange={handleChange}
-                                >
-                                  <option value="">Selecione a origem</option>
-                                  <option value="Site">Site</option>
-                                  <option value="Indicação">Indicação</option>
-                                  <option value="LinkedIn">LinkedIn</option>
-                                  <option value="Evento">Evento</option>
-                                  <option value="Feira">Feira</option>
-                                  <option value="Anúncio">Anúncio</option>
-                                </Input>
-                              </FormGroup>
-                            </Col>
-                          </Row>
-                        )}
-                      </TabPane>
-                      
-                      {/* Aba de Endereço */}
-                      <TabPane tabId="2">
-                        <Row>
-                          <Col md={12}>
-                            <FormGroup>
-                              <Label for="address">Endereço</Label>
-                              <Input
-                                type="text"
-                                name="address"
-                                id="address"
-                                value={formData.address}
-                                onChange={handleChange}
-                                placeholder="Rua, número, complemento"
-                              />
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        
-                        <Row>
-                          <Col md={4}>
-                            <FormGroup>
-                              <Label for="city">Cidade</Label>
-                              <Input
-                                type="text"
-                                name="city"
-                                id="city"
-                                value={formData.city}
-                                onChange={handleChange}
-                                placeholder="Informe a cidade"
-                              />
-                            </FormGroup>
-                          </Col>
-                          <Col md={4}>
-                            <FormGroup>
-                              <Label for="state">Estado</Label>
-                              <Input
-                                  type="select"
-                                  name="state"
-                                  id="state"
-                                  value={formData.state}
-                                  onChange={handleChange}
-                                >
-                                <option value="">Selecione o estado</option>
-                                <option value="AC">Acre</option>
-                                <option value="AL">Alagoas</option>
-                                <option value="AP">Amapá</option>
-                                <option value="AM">Amazonas</option>
-                                <option value="BA">Bahia</option>
-                                <option value="CE">Ceará</option>
-                                <option value="DF">Distrito Federal</option>
-                                <option value="ES">Espírito Santo</option>
-                                <option value="GO">Goiás</option>
-                                <option value="MA">Maranhão</option>
-                                <option value="MT">Mato Grosso</option>
-                                <option value="MS">Mato Grosso do Sul</option>
-                                <option value="MG">Minas Gerais</option>
-                                <option value="PA">Pará</option>
-                                <option value="PB">Paraíba</option>
-                                <option value="PR">Paraná</option>
-                                <option value="PE">Pernambuco</option>
-                                <option value="PI">Piauí</option>
-                                <option value="RJ">Rio de Janeiro</option>
-                                <option value="RN">Rio Grande do Norte</option>
-                                <option value="RS">Rio Grande do Sul</option>
-                                <option value="RO">Rondônia</option>
-                                <option value="RR">Roraima</option>
-                                <option value="SC">Santa Catarina</option>
-                                <option value="SP">São Paulo</option>
-                                <option value="SE">Sergipe</option>
-                                <option value="TO">Tocantins</option>
-                              </Input>
-                            </FormGroup>
-                          </Col>
-                          <Col md={4}>
-                            <FormGroup>
-                              <Label for="zipCode">CEP</Label>
-                              <Input
-                                type="text"
-                                name="zipCode"
-                                id="zipCode"
-                                value={formData.zipCode}
-                                onChange={handleChange}
-                                placeholder="Informe o CEP"
-                              />
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                      </TabPane>
-                      
-                      {/* Aba de Contatos (apenas para empresas) */}
-                      {clientType === "empresa" && (
-                        <TabPane tabId="3">
-                          <div className="mb-3">
-                            <h5 className="mb-3">Contatos da Empresa</h5>
-                            <p className="text-muted">Adicione os contatos das pessoas que trabalham nesta empresa</p>
+                    {/* Busca rápida para empresas */}
+                    {clientType === "empresa" && (
+                      <div className="mb-4">
+                        <InputGroup className="search-box">
+                          <Input
+                            type="text"
+                            name="cnpj"
+                            value={formData.cnpj}
+                            onChange={handleChange}
+                            placeholder="Digite o CNPJ da empresa para buscar dados"
+                            className="form-control"
+                          />
+                          <div className="input-group-text bg-primary text-white">
+                            <i className="mdi mdi-magnify"></i>
                           </div>
-                          
-                          {formData.contacts.map((contact, index) => (
-                            <div key={index} className="border rounded p-3 mb-3">
-                              <div className="d-flex justify-content-between align-items-center mb-3">
-                                <h5 className="mb-0">Contato #{index + 1}</h5>
-                                {formData.contacts.length > 1 && (
-                                  <Button
-                                    color="danger"
-                                    size="sm"
-                                    onClick={() => removeContact(index)}
-                                  >
-                                    <i className="bx bx-trash"></i> Remover
-                                  </Button>
-                                )}
-                              </div>
-                              
-                              <Row>
-                                <Col md={6}>
-                                  <FormGroup>
-                                    <Label>Nome</Label>
-                                    <Input
-                                      type="text"
-                                      value={contact.name}
-                                      onChange={(e) => handleContactChange(index, "name", e.target.value)}
-                                      placeholder="Nome do contato"
-                                    />
-                                  </FormGroup>
-                                </Col>
-                                <Col md={6}>
-                                  <FormGroup>
-                                    <Label>CPF</Label>
-                                    <Input
-                                      type="text"
-                                      value={contact.cpf}
-                                      onChange={(e) => handleContactChange(index, "cpf", e.target.value)}
-                                      placeholder="CPF do contato"
-                                    />
-                                  </FormGroup>
-                                </Col>
-                              </Row>
-                              
-                              <Row>
-                                <Col md={6}>
-                                  <FormGroup>
-                                    <Label>Cargo</Label>
-                                    <Input
-                                      type="text"
-                                      value={contact.role}
-                                      onChange={(e) => handleContactChange(index, "role", e.target.value)}
-                                      placeholder="Cargo do contato"
-                                    />
-                                  </FormGroup>
-                                </Col>
-                                <Col md={6}>
-                                  <FormGroup>
-                                    <Label>Email</Label>
-                                    <Input
-                                      type="email"
-                                      value={contact.email}
-                                      onChange={(e) => handleContactChange(index, "email", e.target.value)}
-                                      placeholder="Email do contato"
-                                    />
-                                  </FormGroup>
-                                </Col>
-                              </Row>
-                              
-                              <Row>
-                                <Col md={6}>
-                                  <FormGroup>
-                                    <Label>Telefone</Label>
-                                    <Input
-                                      type="text"
-                                      value={contact.phone}
-                                      onChange={(e) => handleContactChange(index, "phone", e.target.value)}
-                                      placeholder="Telefone do contato"
-                                    />
-                                  </FormGroup>
-                                </Col>
-                              </Row>
-                            </div>
-                          ))}
-                          
-                          <Button color="primary" onClick={addContact}>
-                            <i className="bx bx-plus me-1"></i> Adicionar Contato
-                          </Button>
-                        </TabPane>
-                      )}
-                      
-                      {/* Aba de Anotações */}
-                      <TabPane tabId="4">
+                        </InputGroup>
+                        <small className="text-muted">Se a empresa já existir no sistema, seus dados serão preenchidos automaticamente</small>
+                      </div>
+                    )}
+                    
+                    {/* Seção: Informações Básicas */}
+                    <h6 className="text-primary fw-medium mb-3">
+                      <i className="bx bx-user-circle me-1"></i> Informações Básicas
+                    </h6>
+                    
+                    <Row className="g-3">
+                      <Col md={6} xl={4}>
                         <FormGroup>
-                          <Label for="notes">Anotações</Label>
+                          <Label className="form-label fw-medium">Nome {clientType === "empresa" ? "da Empresa" : ""} *</Label>
+                          <Input
+                            type="text"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            placeholder={`Informe o nome ${clientType === "empresa" ? "da empresa" : "completo"}`}
+                            required
+                          />
+                        </FormGroup>
+                      </Col>
+                      
+                      <Col md={6} xl={4}>
+                        <FormGroup>
+                          <Label className="form-label fw-medium">Email</Label>
+                          <Input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            placeholder="Informe o email"
+                          />
+                        </FormGroup>
+                      </Col>
+                      
+                      <Col md={6} xl={4}>
+                        <FormGroup>
+                          <Label className="form-label fw-medium">Telefone</Label>
+                          <Input
+                            type="text"
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            placeholder="Informe o telefone"
+                          />
+                        </FormGroup>
+                      </Col>
+                      
+                      <Col md={6} xl={4}>
+                        <FormGroup>
+                          <Label className="form-label fw-medium">Status</Label>
+                          <div className="d-flex gap-2">
+                            <Button 
+                              color={formData.status === "Ativo" ? "success" : "light"} 
+                              size="sm" 
+                              className="w-50"
+                              onClick={() => setFormData({...formData, status: "Ativo"})}
+                              type="button"
+                            >
+                              <i className="mdi mdi-check-circle me-1"></i> Ativo
+                            </Button>
+                            <Button 
+                              color={formData.status === "Inativo" ? "danger" : "light"} 
+                              size="sm" 
+                              className="w-50"
+                              onClick={() => setFormData({...formData, status: "Inativo"})}
+                              type="button"
+                            >
+                              <i className="mdi mdi-close-circle me-1"></i> Inativo
+                            </Button>
+                          </div>
+                        </FormGroup>
+                      </Col>
+                      
+                      <Col md={6} xl={4}>
+                        <FormGroup>
+                          <Label className="form-label fw-medium">Origem</Label>
+                          <Input
+                            type="select"
+                            name="source"
+                            value={formData.source}
+                            onChange={handleChange}
+                            className="form-select"
+                          >
+                            <option value="">Selecione a origem</option>
+                            <option value="Indicação">Indicação</option>
+                            <option value="Site">Site</option>
+                            <option value="Redes Sociais">Redes Sociais</option>
+                            <option value="Email Marketing">Email Marketing</option>
+                            <option value="Evento">Evento</option>
+                            <option value="Linkedin">LinkedIn</option>
+                            <option value="Outros">Outros</option>
+                          </Input>
+                        </FormGroup>
+                      </Col>
+                      
+                      <Col md={6} xl={4}>
+                        <FormGroup>
+                          <Label className="form-label fw-medium">Segmento</Label>
+                          <Input
+                            type="select"
+                            name="segment"
+                            value={formData.segment}
+                            onChange={handleChange}
+                            className="form-select"
+                          >
+                            <option value="">Selecione o segmento</option>
+                            <option value="Tecnologia">Tecnologia</option>
+                            <option value="Educação">Educação</option>
+                            <option value="Saúde">Saúde</option>
+                            <option value="Financeiro">Financeiro</option>
+                            <option value="Indústria">Indústria</option>
+                            <option value="Varejo">Varejo</option>
+                            <option value="Serviços">Serviços</option>
+                            <option value="Consultoria">Consultoria</option>
+                            <option value="Construção">Construção</option>
+                            <option value="Logística">Logística</option>
+                          </Input>
+                        </FormGroup>
+                      </Col>
+                    </Row>
+
+                    {/* Campos específicos para Pessoa */}
+                    {clientType === "pessoa" && (
+                      <>
+                        <h6 className="text-primary fw-medium mb-3 mt-4">
+                          <i className="bx bx-briefcase me-1"></i> Informações Profissionais
+                        </h6>
+                        
+                        <Row className="g-3">
+                          <Col md={6} xl={4}>
+                            <FormGroup>
+                              <Label className="form-label fw-medium">Cargo</Label>
+                              <Input
+                                type="text"
+                                name="role"
+                                value={formData.role}
+                                onChange={handleChange}
+                                placeholder="Informe o cargo"
+                              />
+                            </FormGroup>
+                          </Col>
+                          
+                          <Col md={6} xl={4}>
+                            <FormGroup>
+                              <Label className="form-label fw-medium">Empresa</Label>
+                              <Input
+                                type="text"
+                                name="company"
+                                value={formData.company}
+                                onChange={handleChange}
+                                placeholder="Informe a empresa"
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                      </>
+                    )}
+
+                    {/* Campos específicos para Empresa */}
+                    {clientType === "empresa" && (
+                      <>
+                        <h6 className="text-primary fw-medium mb-3 mt-4">
+                          <i className="bx bx-building me-1"></i> Informações da Empresa
+                        </h6>
+                        
+                        <Row className="g-3">
+                          <Col md={6} xl={4}>
+                            <FormGroup>
+                              <Label className="form-label fw-medium">Website</Label>
+                              <Input
+                                type="text"
+                                name="website"
+                                value={formData.website}
+                                onChange={handleChange}
+                                placeholder="Informe o website"
+                              />
+                            </FormGroup>
+                          </Col>
+                          
+                          <Col md={6} xl={4}>
+                            <FormGroup>
+                              <Label className="form-label fw-medium">Número de Funcionários</Label>
+                              <Input
+                                type="number"
+                                name="employees"
+                                value={formData.employees}
+                                onChange={handleChange}
+                                placeholder="Informe o número de funcionários"
+                              />
+                            </FormGroup>
+                          </Col>
+                          
+                          <Col md={6} xl={4}>
+                            <FormGroup>
+                              <Label className="form-label fw-medium">Faturamento Anual (R$)</Label>
+                              <Input
+                                type="text"
+                                name="revenue"
+                                value={formData.revenue}
+                                onChange={handleChange}
+                                placeholder="Informe o faturamento anual"
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                      </>
+                    )}
+
+                    {/* Seção: Endereço */}
+                    <h6 className="text-primary fw-medium mb-3 mt-4">
+                      <i className="bx bx-map-pin me-1"></i> Endereço
+                      <small className="text-muted ms-2 fw-normal">(opcional)</small>
+                    </h6>
+                    
+                    <Row className="g-3">
+                      <Col md={8} xl={5}>
+                        <FormGroup>
+                          <Label className="form-label fw-medium">Logradouro</Label>
+                          <Input
+                            type="text"
+                            name="address"
+                            value={formData.address}
+                            onChange={handleChange}
+                            placeholder="Rua, Avenida, etc."
+                          />
+                        </FormGroup>
+                      </Col>
+                      
+                      <Col md={4} xl={3}>
+                        <FormGroup>
+                          <Label className="form-label fw-medium">Cidade</Label>
+                          <Input
+                            type="text"
+                            name="city"
+                            value={formData.city}
+                            onChange={handleChange}
+                            placeholder="Cidade"
+                          />
+                        </FormGroup>
+                      </Col>
+                      
+                      <Col md={6} xl={2}>
+                        <FormGroup>
+                          <Label className="form-label fw-medium">Estado</Label>
+                          <Input
+                            type="select"
+                            name="state"
+                            value={formData.state}
+                            onChange={handleChange}
+                            className="form-select"
+                          >
+                            <option value="">UF</option>
+                            <option value="AC">AC</option>
+                            <option value="AL">AL</option>
+                            <option value="AP">AP</option>
+                            <option value="AM">AM</option>
+                            <option value="BA">BA</option>
+                            <option value="CE">CE</option>
+                            <option value="DF">DF</option>
+                            <option value="ES">ES</option>
+                            <option value="GO">GO</option>
+                            <option value="MA">MA</option>
+                            <option value="MT">MT</option>
+                            <option value="MS">MS</option>
+                            <option value="MG">MG</option>
+                            <option value="PA">PA</option>
+                            <option value="PB">PB</option>
+                            <option value="PR">PR</option>
+                            <option value="PE">PE</option>
+                            <option value="PI">PI</option>
+                            <option value="RJ">RJ</option>
+                            <option value="RN">RN</option>
+                            <option value="RS">RS</option>
+                            <option value="RO">RO</option>
+                            <option value="RR">RR</option>
+                            <option value="SC">SC</option>
+                            <option value="SP">SP</option>
+                            <option value="SE">SE</option>
+                            <option value="TO">TO</option>
+                          </Input>
+                        </FormGroup>
+                      </Col>
+                      
+                      <Col md={6} xl={2}>
+                        <FormGroup>
+                          <Label className="form-label fw-medium">CEP</Label>
+                          <Input
+                            type="text"
+                            name="zipCode"
+                            value={formData.zipCode}
+                            onChange={handleChange}
+                            placeholder="CEP"
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+
+                    {/* Seção: Contatos (apenas para empresas) */}
+                    {clientType === "empresa" && (
+                      <>
+                        <h6 className="text-primary fw-medium mb-3 mt-4">
+                          <i className="bx bx-group me-1"></i> Contatos da Empresa
+                          <Button
+                            color="link"
+                            className="ms-2 p-0 text-primary"
+                            onClick={addContact}
+                            type="button"
+                          >
+                            <i className="mdi mdi-plus-circle"></i> Adicionar contato
+                          </Button>
+                        </h6>
+                        
+                        {formData.contacts.map((contact, index) => (
+                          <div key={index} className="border rounded-2 p-3 mb-3 bg-light bg-opacity-50">
+                            <div className="d-flex justify-content-between align-items-center mb-3">
+                              <h6 className="mb-0 fw-medium">Contato #{index + 1}</h6>
+                              {formData.contacts.length > 1 && (
+                                <Button
+                                  color="danger"
+                                  size="sm"
+                                  className="btn-sm py-0 px-2"
+                                  onClick={() => removeContact(index)}
+                                  type="button"
+                                >
+                                  <i className="mdi mdi-trash-can-outline me-1"></i> Remover
+                                </Button>
+                              )}
+                            </div>
+                            
+                            <Row className="g-3">
+                              <Col md={6} xl={4}>
+                                <FormGroup>
+                                  <Label className="form-label fw-medium">Nome</Label>
+                                  <Input
+                                    type="text"
+                                    value={contact.name}
+                                    onChange={(e) => handleContactChange(index, "name", e.target.value)}
+                                    placeholder="Nome do contato"
+                                  />
+                                </FormGroup>
+                              </Col>
+                              
+                              <Col md={6} xl={4}>
+                                <FormGroup>
+                                  <Label className="form-label fw-medium">Cargo</Label>
+                                  <Input
+                                    type="text"
+                                    value={contact.role}
+                                    onChange={(e) => handleContactChange(index, "role", e.target.value)}
+                                    placeholder="Cargo do contato"
+                                  />
+                                </FormGroup>
+                              </Col>
+                              
+                              <Col md={6} xl={4}>
+                                <FormGroup>
+                                  <Label className="form-label fw-medium">Email</Label>
+                                  <Input
+                                    type="email"
+                                    value={contact.email}
+                                    onChange={(e) => handleContactChange(index, "email", e.target.value)}
+                                    placeholder="Email do contato"
+                                  />
+                                </FormGroup>
+                              </Col>
+                              
+                              <Col md={6} xl={4}>
+                                <FormGroup>
+                                  <Label className="form-label fw-medium">Telefone</Label>
+                                  <Input
+                                    type="text"
+                                    value={contact.phone}
+                                    onChange={(e) => handleContactChange(index, "phone", e.target.value)}
+                                    placeholder="Telefone do contato"
+                                  />
+                                </FormGroup>
+                              </Col>
+                              
+                              <Col md={6} xl={4}>
+                                <FormGroup>
+                                  <Label className="form-label fw-medium">CPF</Label>
+                                  <Input
+                                    type="text"
+                                    value={contact.cpf}
+                                    onChange={(e) => handleContactChange(index, "cpf", e.target.value)}
+                                    placeholder="CPF do contato"
+                                  />
+                                </FormGroup>
+                              </Col>
+                            </Row>
+                          </div>
+                        ))}
+                      </>
+                    )}
+
+                    {/* Seção: Observações */}
+                    <h6 className="text-primary fw-medium mb-3 mt-4">
+                      <i className="bx bx-chat me-1"></i> Observações
+                    </h6>
+                    
+                    <Row className="g-3">
+                      <Col md={12}>
+                        <FormGroup>
                           <Input
                             type="textarea"
                             name="notes"
-                            id="notes"
-                            rows="6"
+                            rows="3"
                             value={formData.notes}
                             onChange={handleChange}
-                            placeholder="Adicione anotações importantes sobre este cliente"
+                            placeholder={`Informações adicionais sobre ${clientType === "pessoa" ? "a pessoa" : "a empresa"}`}
                           />
                         </FormGroup>
-                      </TabPane>
-                    </TabContent>
-                    
-                    <div className="d-flex justify-content-end mt-4">
-                      <Button color="light" className="me-2" onClick={() => navigate("/clientes")}>
-                        Cancelar
-                      </Button>
-                      <Button color="success" type="submit">
-                        <i className="bx bx-save me-1"></i> Salvar
-                      </Button>
-                    </div>
+                      </Col>
+                    </Row>
                   </Form>
                 </CardBody>
+                
+                <CardFooter className="bg-light d-flex justify-content-between">
+                  <Button 
+                    color="link" 
+                    className="text-danger p-0" 
+                    onClick={() => navigate("/clientes")}
+                  >
+                    <i className="mdi mdi-arrow-left me-1"></i> Cancelar
+                  </Button>
+                  <Button 
+                    color="primary" 
+                    onClick={handleSubmit}
+                  >
+                    <i className="mdi mdi-content-save me-1"></i> Cadastrar
+                  </Button>
+                </CardFooter>
               </Card>
             </Col>
           </Row>
@@ -670,7 +610,7 @@ const ClientForm = (props) => {
 };
 
 ClientForm.propTypes = {
-  t: PropTypes.func.isRequired,
+  t: PropTypes.func,
 };
 
 export default withTranslation()(ClientForm); 
