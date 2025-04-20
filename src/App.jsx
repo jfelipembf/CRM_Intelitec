@@ -28,6 +28,22 @@ import fakeBackend from "./helpers/AuthType/fakeBackend"
 // Activating fake backend
 fakeBackend();
 
+// Componente para página não encontrada
+const NotFound = () => {
+  return (
+    <div className="d-flex align-items-center justify-content-center" style={{ height: "100vh" }}>
+      <div className="text-center">
+        <h1 className="display-1 fw-bold">404</h1>
+        <p className="fs-3">
+          <span className="text-danger">Ops!</span> Página não encontrada.
+        </p>
+        <p className="lead">A página que você está procurando não existe.</p>
+        <a href="/" className="btn btn-primary">Voltar ao início</a>
+      </div>
+    </div>
+  );
+};
+
 // const firebaseConfig = {
 //   apiKey: import.meta.env.VITE_APP_APIKEY,
 //   authDomain: import.meta.env.VITE_APP_AUTHDOMAIN,
@@ -93,6 +109,16 @@ const App = (props) => {
             exact={true}
           />
         ))}
+        
+        {/* Rota de fallback para tratar páginas não encontradas */}
+        <Route
+          path="*"
+          element={
+            <Authmiddleware>
+              <Layout><NotFound /></Layout>
+            </Authmiddleware>
+          }
+        />
       </Routes>
     </React.Fragment>
   );

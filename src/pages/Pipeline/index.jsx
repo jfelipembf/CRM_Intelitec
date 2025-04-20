@@ -1,14 +1,22 @@
 import PropTypes from "prop-types";
 import React, { useState, useEffect } from "react";
-import { ButtonGroup, Button } from "reactstrap";
+import { Container, ButtonGroup, Button } from "reactstrap";
 
-//Import Pipeline
-import PipelineComp from "../../components/Pipeline/Pipeline";
+// Importando o componente Pipeline
+import Pipeline from "../../components/Dashboard/Pipeline";
 
 //i18n
 import { withTranslation } from "react-i18next";
 
-const Pipeline = (props) => {
+// Estilos para a página de Pipeline
+const styles = {
+  pipelineContainer: {
+    height: "calc(100vh - 100px)",
+    overflow: "hidden"
+  }
+};
+
+const PipelinePage = (props) => {
   const { t } = props;
   const [activeFunnel, setActiveFunnel] = useState(null);
   const [viewMode, setViewMode] = useState('pipeline');
@@ -39,59 +47,22 @@ const Pipeline = (props) => {
   //meta title
   document.title = "Pipeline | InteliTec CRM - Sistema de Gestão de Relacionamento com Clientes";
 
-  // Estilo para aumentar a altura das etapas do funil
-  const pipelineStyles = {
-    stageHeight: 'calc(100vh - 130px)', // Altura maior para as etapas
-    containerStyle: {
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column'
-    }
-  };
-
   return (
     <React.Fragment>
       <div className="page-content">
-        <div style={pipelineStyles.containerStyle}>
-          <div className="d-flex justify-content-end p-2 bg-light border-bottom">
-            <ButtonGroup>
-              <Button 
-                color={viewMode === 'pipeline' ? 'primary' : 'light'} 
-                onClick={() => setViewMode('pipeline')}
-                className="fw-medium"
-              >
-                <i className="bx bx-chart me-1"></i> Pipeline
-              </Button>
-              <Button 
-                color={viewMode === 'list' ? 'primary' : 'light'} 
-                onClick={() => setViewMode('list')}
-                className="fw-medium"
-              >
-                <i className="bx bx-list-ul me-1"></i> Lista
-              </Button>
-            </ButtonGroup>
-          </div>
-          
+        <Container fluid className="p-0">
           {/* Pipeline de Vendas */}
-          <div className="flex-grow-1">
-            <PipelineComp 
-              funnelId={activeFunnel?.id} 
-              isEditing={activeFunnel?.isNew || false} 
-              funnelName={activeFunnel?.name}
-              viewMode={viewMode}
-              setViewMode={setViewMode}
-              hideControls={true}
-              stageHeight={pipelineStyles.stageHeight}
-            />
+          <div style={styles.pipelineContainer}>
+            <Pipeline />
           </div>
-        </div>
+        </Container>
       </div>
     </React.Fragment>
   );
 };
 
-Pipeline.propTypes = {
+PipelinePage.propTypes = {
   t: PropTypes.any,
 };
 
-export default withTranslation()(Pipeline);
+export default withTranslation()(PipelinePage);

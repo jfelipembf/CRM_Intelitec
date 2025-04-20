@@ -40,5 +40,35 @@ body {
   overflow: hidden;
 }
 
+// Garantir que a página de mensagens sempre inicie do topo
+.page-content {
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+// Remover qualquer padding ou margin indesejados em containers específicos
+.conversation-container {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+// Ajuste para o container do PerfectScrollbar
+.ps {
+  overflow: hidden !important;
+  overflow-anchor: none;
+  touch-action: auto;
+  -ms-overflow-style: none;
+  overscroll-behavior: contain;
+}
+
+// Garantir posicionamento correto do conteúdo inicial
+.chat-conversation {
+  padding-top: 0 !important;
+  display: flex;
+  flex-direction: column;
+}
+
 // Este arquivo foi criado vazio para resolver o erro de importação
 // Você pode remover a importação deste arquivo em app.scss se preferir

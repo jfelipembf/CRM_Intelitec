@@ -28,19 +28,10 @@ const Conversation = ({ messages, contact, onSendMessage, avatarMe }) => {
     email: "bx-envelope"
   };
 
-  // Rolar para a última mensagem apenas quando o usuário estiver na última mensagem
-  const [isAtBottom, setIsAtBottom] = useState(false);
-
-  const handleScroll = (e) => {
-    const element = e.target;
-    setIsAtBottom(element.scrollHeight - element.scrollTop <= element.clientHeight + 10);
-  };
-
+  // Rolar para a última mensagem quando as mensagens mudarem
   useEffect(() => {
-    if (isAtBottom) {
-      scrollToBottom();
-    }
-  }, [messages, isAtBottom]);
+    scrollToBottom();
+  }, [messages]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -97,10 +88,7 @@ const Conversation = ({ messages, contact, onSendMessage, avatarMe }) => {
     <div className="conversation-container">
       {/* Área de mensagens */}
       <div className="chat-conversation p-3">
-        <PerfectScrollbar 
-          style={{ height: "calc(100vh - 180px)" }}
-          onScroll={handleScroll}
-        >
+        <PerfectScrollbar style={{ height: "calc(100vh - 180px)" }}>
           <ul className="list-unstyled mb-0" style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
             {Object.keys(messageGroups).map((date) => (
               <React.Fragment key={date}>
