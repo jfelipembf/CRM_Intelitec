@@ -18,7 +18,9 @@ import {
 } from "reactstrap";
 import { Link, useNavigate } from "react-router-dom";
 
-const GoalForm = ({ goal = null, isEditing = false }) => {
+const GoalForm = ({ goal, isEditing }) => {
+  goal = goal || null;
+  isEditing = isEditing || false;
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: "",
@@ -510,11 +512,8 @@ const GoalForm = ({ goal = null, isEditing = false }) => {
 GoalForm.propTypes = {
   goal: PropTypes.object,
   isEditing: PropTypes.bool
-};
+}
 
-GoalForm.defaultProps = {
-  goal: null,
-  isEditing: false
-};
+
 
 export default GoalForm; 

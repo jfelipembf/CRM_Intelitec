@@ -19,6 +19,7 @@ import Employees from "../pages/Employees/index";
 import EmployeeForm from "../pages/Employees/EmployeeForm";
 // // Messages
 import Messages from "../pages/Messages/index";
+import Attendance from "../pages/Attendance/index";
 // // Goals (Metas)
 import Goals from "../pages/Goals/index";
 import NewGoal from "../components/Goals/NewGoal";
@@ -41,6 +42,7 @@ const authProtectedRoutes = [
   { path: "/colaborador/:id", component: <CustomerDetail /> }, // Reaproveitando o componente CustomerDetail
   // Rotas de Mensagens
   { path: "/mensagens", component: <Messages /> },
+  { path: "/atendimento/:id", component: <Attendance /> },
   // Rotas de Metas
   { path: "/metas", component: <Goals /> },
   { path: "/metas/nova", component: <NewGoal /> },
