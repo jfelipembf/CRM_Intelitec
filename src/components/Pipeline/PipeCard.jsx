@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { Card } from "reactstrap";
+import { Card, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 
 const PipeCard = ({ opportunity, onDragStart }) => {
   const navigate = useNavigate();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   // Formatação de valores monetários
   const formatCurrency = (value) => {
@@ -38,8 +39,6 @@ const PipeCard = ({ opportunity, onDragStart }) => {
   // Determinar o estilo do card com base no status de atraso
   const cardStyle = isOverdue() ? { 
     borderLeft: '3px solid #ff6b81' // Borda rosa à esquerda para cards atrasados
-  } : opportunity.sold ? {
-    borderLeft: '3px solid #28a745' // Borda verde à esquerda para oportunidades vendidas
   } : {
     // Estilo para cards normais (não vencidos, não vendidos)
     borderLeft: '3px solid #17a2b8' // Borda azul para cards normais
@@ -51,24 +50,13 @@ const PipeCard = ({ opportunity, onDragStart }) => {
     e.target.classList.add('dragging-card');
     
     // Definindo os dados a serem transferidos
-    e.dataTransfer.setData('application/json', JSON.stringify(opportunity));
+    e.dataTransfer.setData('application/json', JSON.stringify({
+      id: opportunity.id,
+      stageId: opportunity.stageId
+    }));
     
     // Configurar efeito de cópia para melhor compatibilidade
     e.dataTransfer.effectAllowed = 'move';
-    
-    // Definindo a imagem de arrastar (opcional)
-    const dragImage = e.target.cloneNode(true);
-    dragImage.style.width = `${e.target.offsetWidth}px`;
-    dragImage.style.transform = 'rotate(3deg)';
-    dragImage.style.position = 'absolute';
-    dragImage.style.top = '-1000px';
-    document.body.appendChild(dragImage);
-    e.dataTransfer.setDragImage(dragImage, 20, 20);
-    
-    // Limpeza após um curto atraso
-    setTimeout(() => {
-      document.body.removeChild(dragImage);
-    }, 0);
     
     // Callback para o componente pai (opcional)
     if (onDragStart) {
@@ -106,7 +94,7 @@ const PipeCard = ({ opportunity, onDragStart }) => {
   
   return (
     <Card 
-      className={`mb-2 border shadow-sm pipeline-card ${isOverdue() ? 'overdue-card' : ''} ${opportunity.sold ? 'sold-card' : ''} ${!isOverdue() && !opportunity.sold ? 'normal-card' : ''}`}
+      className={`mb-2 border shadow-sm pipeline-card ${isOverdue() ? 'overdue-card' : ''} ${!isOverdue() ? 'normal-card' : ''} d-flex flex-column`}
       draggable="true"
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
@@ -116,23 +104,25 @@ const PipeCard = ({ opportunity, onDragStart }) => {
       style={{...cardStyle, cursor: 'pointer'}}
     >
       <div className="p-2">
-        {/* Status de vendida (badge na parte superior) */}
-        {opportunity.sold && (
-          <div className="position-absolute end-0 top-0 mt-2 me-2">
-            <span className="badge bg-success rounded-pill px-2 py-1">
-              <i className="mdi mdi-check-circle me-1"></i>Vendida
-            </span>
-          </div>
-        )}
-        
-        {/* Cabeçalho com título e badge de probabilidade */}
         <div className="d-flex justify-content-between align-items-center mb-2">
-          <h6 className="mb-0 text-truncate fw-medium" style={{ maxWidth: opportunity.sold ? "170px" : "210px" }}>
+          <h6 className="mb-0 text-truncate fw-medium" style={{ maxWidth: "210px" }}>
             {opportunity.name}
           </h6>
-          <span className={`badge ${opportunity.probability >= 70 ? 'bg-success' : opportunity.probability >= 40 ? 'bg-warning' : 'bg-danger'} rounded-pill fs-11`}>
-            {opportunity.probability}%
-          </span>
+          <div className="d-flex align-items-center">
+            <Dropdown isOpen={dropdownOpen} toggle={() => setDropdownOpen(!dropdownOpen)}>
+              <DropdownToggle tag="button" className="btn btn-link p-0" style={{ border: 'none', background: 'none' }}>
+                <i className="mdi mdi-dots-vertical"></i>
+              </DropdownToggle>
+              <DropdownMenu>
+                <DropdownItem onClick={() => navigate(`/cliente/${opportunity.id}`)}>
+                  <i className="mdi mdi-information-outline"></i> Info
+                </DropdownItem>
+                <DropdownItem onClick={() => navigate(`/atendimento/${opportunity.id}`)}>
+                  <i className="mdi mdi-headset"></i> Atendimento
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </div>
         </div>
 
         {/* Informações da empresa */}
@@ -170,15 +160,7 @@ const PipeCard = ({ opportunity, onDragStart }) => {
           </div>
         </div>
 
-        {/* Responsável */}
-        <div className="small">
-          <div className="d-flex align-items-center">
-            <i className="mdi mdi-account me-1"></i>
-            <span className="text-truncate" style={{ maxWidth: "200px" }}>
-              {opportunity.responsible}
-            </span>
-          </div>
-        </div>
+
       </div>
     </Card>
   );
@@ -192,11 +174,8 @@ PipeCard.propTypes = {
     amount: PropTypes.number,
     recurrent: PropTypes.bool,
     recurrentAmount: PropTypes.number,
-    probability: PropTypes.number,
     dueDate: PropTypes.string,
-    responsible: PropTypes.string,
-    stageId: PropTypes.number.isRequired,
-    sold: PropTypes.bool
+    stageId: PropTypes.number.isRequired
   }).isRequired,
   onDragStart: PropTypes.func
 };

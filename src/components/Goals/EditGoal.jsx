@@ -45,24 +45,17 @@ const EditGoal = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid>
-          <div className="page-title-box">
-            <Row className="align-items-center mb-2">
-              <Col>
-                <h4 className="page-title mb-0">Editar Meta</h4>
-              </Col>
-              <Col className="text-end">
-                <Link to="/metas">
-                  <Button color="light">
-                    <i className="bx bx-arrow-back font-size-16 align-middle me-1"></i>
-                    Voltar para Metas
-                  </Button>
-                </Link>
-              </Col>
-            </Row>
-            {!loading && !error && goal && (
-              <p className="text-muted mt-1">Editando: {goal.title}</p>
-            )}
+          <div className="d-flex justify-content-end align-items-center mb-4">
+            <Link to="/metas">
+              <Button color="light">
+                <i className="bx bx-arrow-back font-size-16 align-middle me-1"></i>
+                Voltar para Metas
+              </Button>
+            </Link>
           </div>
+          {!loading && !error && goal && (
+            <p className="text-muted mt-1">Editando: {goal.title}</p>
+          )}
 
           <Row>
             <Col xl={12}>

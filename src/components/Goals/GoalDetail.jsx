@@ -143,19 +143,11 @@ const GoalDetail = () => {
         <Container fluid>
           <Row className="mb-4">
             <Col>
-              <div className="d-flex align-items-center">
-                <div>
-                  <h4 className="font-weight-bold mb-1">Detalhes da Meta</h4>
-                  <Breadcrumb className="mb-0 p-0 bg-transparent">
-                    <BreadcrumbItem>
-                      <Link to="/dashboard">Dashboard</Link>
-                    </BreadcrumbItem>
-                    <BreadcrumbItem>
-                      <Link to="/metas">Metas</Link>
-                    </BreadcrumbItem>
-                    <BreadcrumbItem active>{goal.title}</BreadcrumbItem>
-                  </Breadcrumb>
-                </div>
+              <div className="d-flex justify-content-end">
+                <Button color="light" onClick={() => navigate(-1)}>
+                  <i className="bx bx-arrow-back font-size-16 align-middle me-1"></i>
+                  Voltar
+                </Button>
               </div>
             </Col>
           </Row>

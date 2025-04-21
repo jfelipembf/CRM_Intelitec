@@ -38,7 +38,9 @@ function* loginUser({ payload: { user, history } }) {
       localStorage.setItem("authUser", JSON.stringify(response));
       yield put(loginSuccess(response));
     }
-    history('/dashboard');
+    if (history) {
+      history('/dashboard');
+    }
   } catch (error) {
     yield put(apiError(error));
   }

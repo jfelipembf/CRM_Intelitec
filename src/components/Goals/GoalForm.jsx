@@ -18,7 +18,7 @@ import {
 } from "reactstrap";
 import { Link, useNavigate } from "react-router-dom";
 
-const GoalForm = ({ goal, isEditing }) => {
+const GoalForm = ({ goal = null, isEditing = false }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: "",

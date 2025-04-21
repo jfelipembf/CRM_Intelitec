@@ -74,11 +74,13 @@ const GoalsList = ({ goals, activeTab }) => {
                 <td>
                   <div>
                     <h5 className="font-size-14 mb-1">
-                      <Link to={`/metas/${goal.id}`} className="text-dark">
-                        {goal.title}
+                      <Link to={`/metas/${goal.id}`} className="text-dark" title={goal.title}>
+                        {goal.title.length > 30 ? goal.title.substring(0, 30) + '...' : goal.title}
                       </Link>
                     </h5>
-                    <p className="text-muted mb-0">{goal.description}</p>
+                    <p className="text-muted mb-0" title={goal.description}>
+                      {goal.description.length > 50 ? goal.description.substring(0, 50) + '...' : goal.description}
+                    </p>
                   </div>
                 </td>
                 <td>

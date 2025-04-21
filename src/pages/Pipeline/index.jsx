@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Container, ButtonGroup, Button } from "reactstrap";
 
 // Importando o componente Pipeline
-import Pipeline from "../../components/Dashboard/Pipeline";
+import Pipeline from "../../components/Pipeline/Pipeline";
 
 //i18n
 import { withTranslation } from "react-i18next";
@@ -51,9 +51,35 @@ const PipelinePage = (props) => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid className="p-0">
-          {/* Pipeline de Vendas */}
+          <div className="d-flex justify-content-end mb-3">
+            <ButtonGroup>
+              <Button 
+                color="secondary" 
+                onClick={() => setViewMode('pipeline')}
+                active={viewMode === 'pipeline'}
+                className="me-1"
+              >
+                <i className="mdi mdi-view-dashboard-outline me-1"></i>
+                Pipeline
+              </Button>
+              <Button 
+                color="secondary" 
+                onClick={() => setViewMode('list')}
+                active={viewMode === 'list'}
+              >
+                <i className="mdi mdi-format-list-bulleted me-1"></i>
+                Lista
+              </Button>
+            </ButtonGroup>
+          </div>
           <div style={styles.pipelineContainer}>
-            <Pipeline />
+            <Pipeline 
+              t={t} 
+              activeFunnel={activeFunnel} 
+              setActiveFunnel={setActiveFunnel}
+              viewMode={viewMode}
+              setViewMode={setViewMode}
+            />
           </div>
         </Container>
       </div>

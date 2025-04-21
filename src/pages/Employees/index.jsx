@@ -317,20 +317,25 @@ const Employees = (props) => {
 
                   {/* Filtro de busca */}
                   <CardBody>
-                    <div className="mt-3 position-relative">
-                      <div className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">
-                        <i className="bx bx-search-alt"></i>
+                    <div className="search-box position-relative" style={{ maxWidth: '300px' }}>
+                      <div className="position-relative">
+                        <Input
+                          type="text"
+                          className="form-control"
+                          placeholder="Pesquisar..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          style={{
+                            height: '36px',
+                            paddingLeft: '38px',
+                            paddingRight: '38px'
+                          }}
+                        />
+                        <i className="bx bx-search-alt search-icon text-muted" style={{ fontSize: '1.2rem' }}></i>
                       </div>
-                      <Input
-                        type="text"
-                        className="form-control ps-4"
-                        placeholder="Pesquisar por nome, email, cargo ou departamento..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                      />
                       {searchTerm && (
                         <div className="position-absolute end-0 top-50 translate-middle-y me-3" style={{ cursor: 'pointer' }}>
-                          <i className="bx bx-x text-muted fs-5" onClick={() => setSearchTerm("")}></i>
+                          <i className="bx bx-x text-muted" onClick={() => setSearchTerm("")}></i>
                         </div>
                       )}
                     </div>

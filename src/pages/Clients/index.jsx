@@ -333,22 +333,22 @@ const Clients = (props) => {
                   </div>
                   
                   {/* Barra de pesquisa */}
-                  <div className="mt-3 position-relative">
-                    <div className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">
-                      <i className="bx bx-search-alt"></i>
+                  <div className="search-box position-relative" style={{ maxWidth: '300px', marginTop: '20px' }}>
+                    <div className="position-relative">
+                      <Input
+                        type="text"
+                        className="form-control"
+                        placeholder="Pesquisar por nome, empresa, email ou telefone..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        style={{
+                          height: '36px',
+                          paddingLeft: '38px',
+                          paddingRight: '38px'
+                        }}
+                      />
+                      <i className="bx bx-search-alt search-icon text-muted" style={{ fontSize: '1.2rem' }}></i>
                     </div>
-                    <Input
-                      type="text"
-                      className="form-control ps-4"
-                      placeholder="Pesquisar por nome, empresa, email ou telefone..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    {searchTerm && (
-                      <div className="position-absolute end-0 top-50 translate-middle-y me-3" style={{ cursor: 'pointer' }}>
-                        <i className="bx bx-x text-muted fs-5" onClick={() => setSearchTerm("")}></i>
-                      </div>
-                    )}
                   </div>
                 </CardBody>
                 

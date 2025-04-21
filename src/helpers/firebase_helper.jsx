@@ -1,21 +1,24 @@
-import firebase from 'firebase/compat/app';
-
-// Add the Firebase products that you want to use
-import "firebase/compat/auth";
-import "firebase/compat/firestore";
+import { getApps, initializeApp } from 'firebase/app';
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from 'firebase/auth';
+import { getFirestore, doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 class FirebaseAuthBackend {
   constructor(firebaseConfig) {
     if (firebaseConfig) {
-      // Initialize Firebase
-      firebase.initializeApp(firebaseConfig);
-      firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-          localStorage.setItem("authUser", JSON.stringify(user));
-        } else {
-          localStorage.removeItem("authUser");
-        }
-      });
+      // Check if Firebase is already initialized
+      const apps = getApps();
+      if (apps.length === 0) {
+        // Initialize Firebase if not already initialized
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            localStorage.setItem("authUser", JSON.stringify(user));
+          } else {
+            localStorage.removeItem("authUser");
+          }
+        });
+      }
     }
   }
 
@@ -24,12 +27,11 @@ class FirebaseAuthBackend {
    */
   registerUser = (email, password) => {
     return new Promise((resolve, reject) => {
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password)
+      const auth = getAuth();
+      createUserWithEmailAndPassword(auth, email, password)
         .then(
           user => {
-            resolve(firebase.auth().currentUser);
+            resolve(user.user);
           },
           error => {
             reject(this._handleError(error));
@@ -43,12 +45,11 @@ class FirebaseAuthBackend {
    */
   editProfileAPI = (email, password) => {
     return new Promise((resolve, reject) => {
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password)
+      const auth = getAuth();
+      createUserWithEmailAndPassword(auth, email, password)
         .then(
           user => {
-            resolve(firebase.auth().currentUser);
+            resolve(user.user);
           },
           error => {
             reject(this._handleError(error));
@@ -62,12 +63,11 @@ class FirebaseAuthBackend {
    */
   loginUser = (email, password) => {
     return new Promise((resolve, reject) => {
-      firebase
-        .auth()
-        .signInWithEmailAndPassword(email, password)
+      const auth = getAuth();
+      signInWithEmailAndPassword(auth, email, password)
         .then(
           user => {
-            resolve(firebase.auth().currentUser);
+            resolve(user.user);
           },
           error => {
             reject(this._handleError(error));
@@ -81,12 +81,10 @@ class FirebaseAuthBackend {
    */
   forgetPassword = email => {
     return new Promise((resolve, reject) => {
-      firebase
-        .auth()
-        .sendPasswordResetEmail(email, {
-          url:
-            window.location.protocol + "//" + window.location.host + "/login",
-        })
+      const auth = getAuth();
+      sendPasswordResetEmail(auth, email, {
+        url: window.location.protocol + "//" + window.location.host + "/login"
+      })
         .then(() => {
           resolve(true);
         })
@@ -101,9 +99,8 @@ class FirebaseAuthBackend {
    */
   logout = () => {
     return new Promise((resolve, reject) => {
-      firebase
-        .auth()
-        .signOut()
+      const auth = getAuth();
+      signOut(auth)
         .then(() => {
           resolve(true);
         })
@@ -119,13 +116,14 @@ class FirebaseAuthBackend {
 
   socialLoginUser = async (type) => {
     let provider;
+    const auth = getAuth();
     if (type === "google") {
-        provider = new firebase.auth.GoogleAuthProvider();
+        provider = new GoogleAuthProvider();
     } else if (type === "facebook") {
-        provider = new firebase.auth.FacebookAuthProvider();
+        provider = new FacebookAuthProvider();
     }
     try {
-        const result = await firebase.auth().signInWithPopup(provider);
+        const result = await signInWithPopup(auth, provider);
         const user = result.user;
         return user;
     } catch (error) {
@@ -135,7 +133,7 @@ class FirebaseAuthBackend {
 
 
   addNewUserToFirestore = (user) => {
-    const collection = firebase.firestore().collection("users");
+    const db = getFirestore();
     const { profile } = user.additionalUserInfo;
     const details = {
       firstName: profile.given_name ? profile.given_name : profile.first_name,
@@ -143,10 +141,10 @@ class FirebaseAuthBackend {
       fullName: profile.name,
       email: profile.email,
       picture: profile.picture,
-      createdDtm: firebase.firestore.FieldValue.serverTimestamp(),
-      lastLoginTime: firebase.firestore.FieldValue.serverTimestamp()
+      createdDtm: serverTimestamp(),
+      lastLoginTime: serverTimestamp()
     };
-    collection.doc(firebase.auth().currentUser.uid).set(details);
+    setDoc(doc(db, "users", user.user.uid), details);
     return { user, details };
   };
 

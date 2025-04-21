@@ -4,12 +4,16 @@ import { Link } from "react-router-dom";
 import withRouter from "../../components/Common/withRouter";
 
 //redux
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "../../../store";
 import { createSelector } from "reselect";
 
 // Formik validation
 import * as Yup from "yup";
 import { useFormik } from "formik";
+
+// Firebase
+import firebaseConfig from "../../../config/firebaseConfig";
+import { initFirebaseBackend, getFirebaseBackend } from "../../../helpers/firebase_helper";
 
 import {
   Row,
@@ -25,7 +29,7 @@ import {
 } from "reactstrap";
 
 // actions
-import { loginUser, socialLogin } from "/src/store/actions";
+import { loginUser, socialLogin } from "../../../store/actions";
 
 // import images
 import profile from "../../assets/images/profile-img.png";
@@ -50,16 +54,15 @@ const Login = (props) => {
       password: Yup.string().required("Please Enter Your Password"),
     }),
     onSubmit: (values) => {
-      dispatch(loginUser(values, props.router.navigate));
+      dispatch(loginUser(values, () => props.router.navigate('/dashboard')));
     },
   });
 
-  const LoginProperties = createSelector(
-    (state) => state.Login,
-    (login) => ({
-      error: login.error
-    })
-  );
+  // Initialize Firebase if not already initialized
+  const firebaseBackend = getFirebaseBackend();
+  if (!firebaseBackend) {
+    initFirebaseBackend(firebaseConfig);
+  }
 
   const {
     error

@@ -71,34 +71,84 @@
 /* Estilos para drag & drop */
 .pipeline-card {
   cursor: grab;
-  transition: all 0.2s ease;
-  animation: card-enter 0.3s forwards;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: card-enter 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   position: relative;
   z-index: 1;
   border-radius: 6px;
   margin-bottom: 10px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  user-select: none;
+}
+
+/* Estilos para o menu de três pontos */
+.pipeline-card .dropdown-toggle {
+  font-size: 18px;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  color: #6c757d;
+}
+
+.pipeline-card:hover .dropdown-toggle {
+  opacity: 1;
+}
+
+.pipeline-card .dropdown-menu {
+  min-width: 120px;
+  padding: 0.25rem 0;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.pipeline-card .dropdown-item {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.pipeline-card .dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: #495057;
+}
+
+.pipeline-card .dropdown-item i {
+  font-size: 16px;
+  color: #6c757d;
+}
+
+/* Estilos para os cards */
+.pipeline-card.normal-card {
+  border-left: 3px solid #17a2b8;
+}
+
+.pipeline-card.overdue-card {
+  border-left: 3px solid #ff6b81;
 }
 
 @keyframes card-enter {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(10px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
 .pipeline-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.01);
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08) !important;
   z-index: 5;
 }
 
 .pipeline-card.dragging-card {
-  opacity: 0.75;
+  opacity: 0.8;
+  transform: translate(0, 0) !important;
+  z-index: 1000;
   transform: scale(0.98) rotate(1deg);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
   z-index: 100;
@@ -124,15 +174,7 @@
   box-shadow: 0 3px 10px rgba(40, 167, 69, 0.15) !important;
 }
 
-/* Estilo para cards normais (não vencidos, não vendidos) */
-.pipeline-card.normal-card {
-  background-color: rgba(255, 255, 255, 1) !important;
-  border-left: 3px solid #17a2b8 !important;
-}
 
-.pipeline-card.normal-card:hover {
-  box-shadow: 0 3px 10px rgba(23, 162, 184, 0.15) !important;
-}
 
 /* Estilo especial para a etapa de Fechamento */
 .pipeline-stage:last-child .pipeline-stage-header {
@@ -192,176 +234,4 @@
 .pipeline-dropzone-end-spacer {
   min-height: 80px;
   width: 100%;
-}
-
-.pipeline-stage.drag-over .pipeline-stage-header {
-  background-color: rgba(0, 123, 255, 0.08);
-}
-
-.pipeline-empty-placeholder {
-  opacity: 0.6;
-  transition: opacity 0.3s ease;
-  text-align: center;
-  padding: 15px 10px;
-  color: #6c757d;
-  font-size: 0.9rem;
-}
-
-.pipeline-dropzone.drag-over .pipeline-empty-placeholder {
-  opacity: 0.3;
-}
-
-.pipeline-dropzone-hint {
-  display: none;
-  text-align: center;
-  padding: 15px;
-  color: #007bff;
-  font-weight: 500;
-  border: 1px dashed rgba(0, 123, 255, 0.5);
-  border-radius: 6px;
-  margin: 8px 0;
-  animation: pulse 1.5s infinite;
-  position: relative;
-  z-index: 11; /* Acima do overlay */
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.2);
-  }
-  70% {
-    box-shadow: 0 0 0 5px rgba(0, 123, 255, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
-  }
-}
-
-.pipeline-dropzone.drag-over .pipeline-dropzone-hint {
-  display: block;
-}
-
-/* Estilos para a visualização em lista */
-.list-view-container {
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  background-color: #fff;
-  margin: 16px;
-}
-
-.list-header {
-  font-size: 14px;
-  color: #495057;
-  background-color: rgba(0,0,0,0.02);
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-  padding: 12px 16px;
-}
-
-.list-body {
-  scrollbar-width: thin;
-}
-
-.list-body::-webkit-scrollbar {
-  width: 6px;
-}
-
-.list-body::-webkit-scrollbar-track {
-  background: #f8f9fa;
-}
-
-.list-body::-webkit-scrollbar-thumb {
-  background-color: #dee2e6;
-  border-radius: 6px;
-}
-
-.list-item {
-  font-size: 14px;
-  transition: background-color 0.2s;
-  cursor: pointer;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-}
-
-.list-item:hover {
-  background-color: rgba(0, 123, 255, 0.05);
-}
-
-.list-item.selected {
-  background-color: rgba(0, 123, 255, 0.1);
-}
-
-.list-view-simple .list-item {
-  padding: 12px 16px;
-}
-
-.list-view-detailed .list-item {
-  padding: 16px;
-}
-
-.list-view-cards {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 16px;
-  gap: 16px;
-}
-
-/* Estilo para avatares */
-.avatar-circle {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f0f0f0;
-  color: #6c757d;
-  font-weight: 500;
-}
-
-.avatar-circle img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Indicadores de status nas colunas */
-.stage-status-indicator {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-right: 8px;
-}
-
-.indicator-prospecting {
-  background-color: #17a2b8;
-}
-
-.indicator-qualification {
-  background-color: #6f42c1;
-}
-
-.indicator-proposal {
-  background-color: #fd7e14;
-}
-
-.indicator-negotiation {
-  background-color: #007bff;
-}
-
-.indicator-closing {
-  background-color: #28a745;
-}
-
-/* Estilos para responsividade em telas pequenas */
-@media (max-width: 768px) {
-  .pipeline-stage {
-    flex: 0 0 250px !important;
-    min-width: 250px !important;
-  }
-  
-  .pipeline-card:hover {
-    transform: none;
-  }
 }

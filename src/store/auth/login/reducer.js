@@ -24,6 +24,9 @@ const login = (state = initialState, action) => {
         ...state,
         loading: false,
       }
+      if (action.payload.history) {
+        action.payload.history('/dashboard')
+      }
       break
     case LOGOUT_USER:
       state = { ...state }

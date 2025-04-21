@@ -7,16 +7,15 @@ import { connect } from "react-redux";
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
 
-// Import Routes all
-import { authProtectedRoutes, publicRoutes } from "./routes/index";
-
-// Import all middleware
-import Authmiddleware from "./routes/route";
+// Import Routes
+import { authProtectedRoutes } from "./routes/index";
 
 // layouts Format
 import VerticalLayout from "./components/VerticalLayout/";
 import HorizontalLayout from "./components/HorizontalLayout/";
-import NonAuthLayout from "./components/NonAuthLayout";
+
+// Import NotFound component
+import NotFound from "./components/NotFound";
 
 // Import scss
 import "./assets/scss/theme.scss";
@@ -28,21 +27,7 @@ import fakeBackend from "./helpers/AuthType/fakeBackend"
 // Activating fake backend
 fakeBackend();
 
-// Componente para página não encontrada
-const NotFound = () => {
-  return (
-    <div className="d-flex align-items-center justify-content-center" style={{ height: "100vh" }}>
-      <div className="text-center">
-        <h1 className="display-1 fw-bold">404</h1>
-        <p className="fs-3">
-          <span className="text-danger">Ops!</span> Página não encontrada.
-        </p>
-        <p className="lead">A página que você está procurando não existe.</p>
-        <a href="/" className="btn btn-primary">Voltar ao início</a>
-      </div>
-    </div>
-  );
-};
+
 
 // const firebaseConfig = {
 //   apiKey: import.meta.env.VITE_APP_APIKEY,
@@ -88,35 +73,21 @@ const App = (props) => {
   return (
     <React.Fragment>
       <Routes>
-        {publicRoutes.map((route, idx) => (
-          <Route
-            path={route.path}
-            element={<NonAuthLayout>{route.component}</NonAuthLayout>}
-            key={idx}
-            exact={true}
-          />
-        ))}
-
         {authProtectedRoutes.map((route, idx) => (
           <Route
             path={route.path}
             element={
-              <Authmiddleware>
-                <Layout>{route.component}</Layout>
-              </Authmiddleware>
+              <Layout>{route.component}</Layout>
             }
             key={idx}
             exact={true}
           />
         ))}
-        
         {/* Rota de fallback para tratar páginas não encontradas */}
         <Route
           path="*"
           element={
-            <Authmiddleware>
-              <Layout><NotFound /></Layout>
-            </Authmiddleware>
+            <Layout><NotFound /></Layout>
           }
         />
       </Routes>

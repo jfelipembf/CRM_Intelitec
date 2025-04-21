@@ -81,9 +81,6 @@ const Activities = ({ t }) => {
     });
   };
 
-  const handleGoToToday = () => {
-    setCurrentDate(new Date());
-  };
 
   // Sample events
   const [events, setEvents] = useState([]);
@@ -288,14 +285,20 @@ const Activities = ({ t }) => {
                   </div>
 
                   {/* Quick filter */}
-                  <div className="mb-4 d-flex search-container">
-                    <div className="position-relative" style={{ maxWidth: '300px', width: '100%' }}>
-                      <div className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">
-                        <i className="bx bx-search-alt"></i>
-                      </div>
-                      <Input type="text" placeholder="Buscar atividades..." className="form-control ps-4" style={{ paddingLeft: '2.5rem' }} />
-                      <div className="position-absolute end-0 top-50 translate-middle-y me-3" style={{ cursor: 'pointer' }}>
-                        <i className="bx bx-x text-muted"></i>
+                  <div className="mb-4 d-flex">
+                    <div className="search-box position-relative" style={{ maxWidth: '300px', width: '100%' }}>
+                      <div className="position-relative">
+                        <Input
+                          type="text"
+                          className="form-control"
+                          placeholder="Buscar atividades..."
+                          style={{
+                            height: '36px',
+                            paddingLeft: '38px',
+                            paddingRight: '38px'
+                          }}
+                        />
+                        <i className="bx bx-search-alt search-icon text-muted" style={{ fontSize: '1.2rem' }}></i>
                       </div>
                     </div>
                   </div>

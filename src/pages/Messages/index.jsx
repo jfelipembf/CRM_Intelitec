@@ -112,18 +112,23 @@ const Messages = props => {
                     {/* Sidebar de contatos */}
                     <Col lg={3}>
                       <div className="p-3 border-bottom">
-                        <InputGroup>
-                          <Input
-                            type="text"
-                            className="form-control"
-                            placeholder="Buscar contatos..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                          />
-                          <div className="input-group-text bg-primary text-white">
-                            <i className="bx bx-search"></i>
+                        <div className="search-box position-relative">
+                          <div className="position-relative">
+                            <Input
+                              type="text"
+                              className="form-control"
+                              placeholder="Buscar contatos..."
+                              value={searchTerm}
+                              onChange={(e) => setSearchTerm(e.target.value)}
+                              style={{
+                                height: '36px',
+                                paddingLeft: '38px',
+                                paddingRight: '38px'
+                              }}
+                            />
+                            <i className="bx bx-search search-icon text-muted" style={{ fontSize: '1.2rem' }}></i>
                           </div>
-                        </InputGroup>
+                        </div>
                       </div>
 
                       <div className="p-3 border-bottom">
